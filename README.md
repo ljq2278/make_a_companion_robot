@@ -23,6 +23,13 @@ and text to text(input-react) and text to action(feeling expression), a platform
 (Raspberry Pi), a network module to transport signal between sensors and brain
 
 
+### server-client architecture
+![](server_client.png)
+
+
+with poor arm-x ability, I put inferences between sensors/actions and texts on the server. 
+
+
 
 ok let's begin
 
