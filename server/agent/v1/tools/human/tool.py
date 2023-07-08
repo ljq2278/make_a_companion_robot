@@ -15,26 +15,26 @@ def _print_func(text: str) -> None:
     print("\n")
     print(text)
 
-def get_input() -> str:
-    print("Insert your text. Enter 'q' or press Ctrl-D (or Ctrl-Z on Windows) to end.")
-    contents = []
-    while True:
-        try:
-            line = input()
-        except EOFError:
-            break
-        if line == "q":
-            break
-        contents.append(line)
-    return "\n".join(contents)
+# def get_input() -> str:
+#     print("Insert your text. Enter 'q' or press Ctrl-D (or Ctrl-Z on Windows) to end.")
+#     contents = []
+#     while True:
+#         try:
+#             line = input()
+#         except EOFError:
+#             break
+#         if line == "q":
+#             break
+#         contents.append(line)
+#     return "\n".join(contents)
 class HumanInputRun(BaseTool):
     """Tool that adds the capability to ask user for input."""
 
     name = "human"
     description = (
-        "You can ask a human for guidance when you think you "
-        "got stuck or you are not sure what to do next. "
-        "The input should be a question for the human."
+        "Useful for when you want to talk or ask to human or just chat "
+        # "got stuck or you are not sure what to do next. "
+        "The input is what you want to talk or ask."
         # "if you think you should get more information from questioner, "
         # "or you want to talk to questioner with something, "
         # "you can use this tool to do that. The input is what you want to say or quest"
@@ -51,7 +51,7 @@ class HumanInputRun(BaseTool):
         """Use the Human input tool."""
         self.prompt_func(query)
         # return self.input_func()
-        return "say to the questioner"
+        return "just say what you want to say"
 
     async def _arun(
         self,

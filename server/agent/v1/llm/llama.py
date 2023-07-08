@@ -18,6 +18,6 @@ def get_llama_llm():
         n_batch=n_batch,
         n_ctx=5000,
         callback_manager=callback_manager,
-        verbose=True,
+        # verbose=True,
     )
     return llm

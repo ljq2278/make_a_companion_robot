@@ -11,38 +11,52 @@ Observation: the result of the action
 Thought: I now know the final answer
 Final Answer: the final answer to the original input question"""
 SUFFIX = """
-if the Observation is "say to the questioner", that mean your Action Input is the Final Answer.
+if the Observation is "just say what you want to say", that mean your Action Input is the Final Answer.
 these are some examples: 
 
 Question: where is China?
 Thought: I must get the location of China
 Action: duckduckgo
 Action Input: location of China
-Observation: China is at the east of Asian
+Observation: China is a country, located in East Asia and lies between latitudes 35.0° North and longitudes 103.00° East. It is the world's most populous country, with a population of around 1,439,323,776 in 2020 at mid year according to UN data and world's third largest country in terms of area.
 Thought: I now know the final answer
 Final Answer: China is at the east of Asian
 
-Question: what is your name?
+Question: Can you tell my some recipes?
+Thought: I must know what kind of recipe it wanted
+Action: human
+Action Input: What kind of recipe do you want?
+Observation: just say what you want to say
+Final Answer: What kind of recipe do you want?
+
+Question: Hi
+Thought: that is not a question. it is just chat with me.
+Action: human
+Action Input: hello!
+Observation: just say what you want to say
+Final Answer: hello!
+
+Question: what is your name
 Thought: I should ask myself to get my name
 Action: askself
 Action Input: what is my name
-Observation: my name is John
+Observation: my name is XXX
 Thought: I now know the final answer
-Final Answer: my name is John
-
-
-Question: Can you tell my some recipes?
-Thought: I must know what kind of recipe the questioner want
-Action: human
-Action Input: What kind of recipe do you want?
-Observation: say to the questioner
-Final Answer: What kind of recipe do you want?
+Final Answer: my name is XXX
 
 Begin!
 {chat_history}
 Question: {input}
 Thought:{agent_scratchpad}"""
 
+
+# Input: what is your name
+# Thought: I should ask myself to get my name
+# Action: askself
+# Action Input: what is my name
+# Observation: my name is John
+# Thought: I now know the final answer
+# Final Answer: my name is John
 
 # Question: Can you tell my some recipes?
 # Thought: I must know what kind of recipe the questioner want

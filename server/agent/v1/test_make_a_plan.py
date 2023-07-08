@@ -1,20 +1,24 @@
 from agents.mrkl.base import ZeroShotAgent, MRKLChain
 from llm.llama import get_llama_llm
 from tools.ddg_search.tool import DuckDuckGoSearchRun
-from tools.human.tool import HumanInputRun, get_input
+from tools.human.tool import HumanInputRun
 from tools.askself.tool import AskSelfRun
 from memory.buffer import ConversationBufferMemory
 from agents.mrkl.prompt_with_example import FORMAT_INSTRUCTIONS, PREFIX, SUFFIX
 from langchain import LLMChain
+import numpy as np
 
 # from langchain.agents import load_tools
+nm = 'Eva'
 save_period = 10
+memory = ConversationBufferMemory(memory_key="chat_history", ai_prefix=nm + "(me)")
+memory.load_from_file('saved')
+
 llm = get_llama_llm()
-# tmp = llm.predict("You are a robot named Eva and you are the friend of human. And you like singing and you like to live in the temperature of 20 to 30 degree centigrade. Your name is ")
 tools = [
     DuckDuckGoSearchRun(),
     HumanInputRun(),
-    # AskSelfRun()
+    AskSelfRun(memory=memory, llm=llm)
 ]
 
 prompt = ZeroShotAgent.create_prompt(
@@ -29,25 +33,43 @@ llm_chain = LLMChain(llm=llm, prompt=prompt)
 #     llm, tools, callback_manager=None, verbose=True,
 # )
 agent_obj = ZeroShotAgent(
-    llm_chain=llm_chain, tools=tools, callback_manager=None, verbose=True,
+    llm_chain=llm_chain,
+    tools=tools,
+    callback_manager=None,
+    # verbose=True,
 )
-memory = ConversationBufferMemory(memory_key="chat_history")
-memory.load_from_file('saved')
+
 agent_executor = MRKLChain.from_agent_and_tools(
     agent=agent_obj,
     tools=tools,
-    verbose=True,
+    # verbose=True,
     memory=memory
 )
 while True:
-    print('say sth ... \n')
-    ipt = input()
-    while True:
-        try:
-            output = agent_executor.run(input=ipt)
-            if output is not None and len(output) > 1:
-                break
-        except Exception as e:
-            print(e)
+    # chat with env, should use interruption mode
+    if np.random.random() > 0.1:
+        memory.human_prefix = 'Environment'
+        ipt = "a man coming to me"
+        while True:
+            try:
+                output = agent_executor.run(input=ipt)
+                if output is not None and len(output) > 1:
+                    break
+            except Exception as e:
+                print(e)
+    # chat with human
+    else:
+        memory.human_prefix = 'Human'
+        print('\nsay sth ... \n')
+        ipt = input()
+        while True:
+            try:
+                output = agent_executor.run(input=ipt)
+                if output is not None and len(output) > 1:
+                    break
+            except Exception as e:
+                print(e)
+    memory.chat_memory.messages[-2].content = memory.human_prefix + ': ' + memory.chat_memory.messages[-2].content
+    memory.chat_memory.messages[-1].content = memory.ai_prefix + ': ' + memory.chat_memory.messages[-1].content
     if len(memory.chat_memory.messages) % save_period == 0:
         memory.save_to_file('saved', save_period)

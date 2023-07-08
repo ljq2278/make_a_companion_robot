@@ -9,7 +9,8 @@ from langchain.callbacks.manager import (
     CallbackManagerForToolRun,
 )
 from langchain.tools.base import BaseTool
-
+from memory.buffer import ConversationBufferMemory
+# from langchain.schema.messages import get_buffer_string
 
 # def _print_func(text: str) -> None:
 #     print("\n")
@@ -21,15 +22,13 @@ class AskSelfRun(BaseTool):
 
     name = "askself"
     description = (
-        "When you are asked something about yourself or you think of something related to yourself, you can use this tool"
+        "Useful for when you want to know something about yourself, "
+        "input should be what you want to know about yourself."
     )
-    preset = (
-        "I am Eva. I am a robot. I am the friend of human. "
-        "I like singing. My ideal living conditions are 20 to 30 degrees. "
-    )
+
     # prompt_func: Callable[[str], None] = Field(default_factory=lambda: _print_func)
     llm: LLM = None
-
+    memory:  ConversationBufferMemory = None
     def _run(
             self,
             query: str,
@@ -37,8 +36,9 @@ class AskSelfRun(BaseTool):
     ) -> str:
         """Use the Human input tool."""
         # self.prompt_func(query)
-        # return self.llm.predict(query)
-        return self.preset
+        history = self.memory.buffer
+        return self.llm.predict(history+"\n\n Human: "+query)
+        # return self.preset
 
     async def _arun(
             self,

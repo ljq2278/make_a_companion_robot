@@ -19,7 +19,7 @@ class DuckDuckGoSearchRun(BaseTool):
     name = "duckduckgo"
     description = (
         "A wrapper around DuckDuckGo Search. "
-        "Useful for when you need to answer questions about knowledge "
+        "Useful for when you need to answer questions about knowledge of the world"
         "Input should be a search query."
     )
     api_wrapper: DuckDuckGoSearchAPIWrapper = Field(
