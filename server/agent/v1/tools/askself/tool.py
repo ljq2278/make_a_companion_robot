@@ -37,7 +37,7 @@ class AskSelfRun(BaseTool):
         """Use the Human input tool."""
         # self.prompt_func(query)
         history = self.memory.buffer
-        return self.llm.predict(history+"\n\n Human: "+query)
+        return self.llm.predict(history+"\n\n"+query)
         # return self.preset
 
     async def _arun(

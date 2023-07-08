@@ -49,7 +49,7 @@ while True:
     # chat with env, should use interruption mode
     if np.random.random() > 0.1:
         memory.human_prefix = 'Environment'
-        ipt = "a man coming to me"
+        ipt = "a man coming to me. "
         while True:
             try:
                 output = agent_executor.run(input=ipt)
