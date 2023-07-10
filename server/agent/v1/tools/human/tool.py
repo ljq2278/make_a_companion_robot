@@ -33,12 +33,7 @@ class HumanInputRun(BaseTool):
     name = "human"
     description = (
         "Useful for when you want to talk or ask to human or just chat "
-        # "got stuck or you are not sure what to do next. "
         "The input is what you want to talk or ask."
-        # "if you think you should get more information from questioner, "
-        # "or you want to talk to questioner with something, "
-        # "you can use this tool to do that. The input is what you want to say or quest"
-        # "And that would be the final answer also."
     )
     prompt_func: Callable[[str], None] = Field(default_factory=lambda: _print_func)
     input_func: Callable = Field(default_factory=lambda: input)

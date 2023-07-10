@@ -3,6 +3,7 @@ from llm.llama import get_llama_llm
 from tools.ddg_search.tool import DuckDuckGoSearchRun
 from tools.human.tool import HumanInputRun
 from tools.askself.tool import AskSelfRun
+from tools.response_to_env.tool import ResponseToEnv
 from memory.buffer import ConversationBufferMemory
 from agents.mrkl.prompt_with_example import FORMAT_INSTRUCTIONS, PREFIX, SUFFIX
 from langchain import LLMChain
@@ -18,7 +19,8 @@ llm = get_llama_llm()
 tools = [
     DuckDuckGoSearchRun(),
     HumanInputRun(),
-    AskSelfRun(memory=memory, llm=llm)
+    AskSelfRun(memory=memory, llm=llm),
+    ResponseToEnv(memory=memory, llm=llm)
 ]
 
 prompt = ZeroShotAgent.create_prompt(
@@ -49,7 +51,7 @@ while True:
     # chat with env, should use interruption mode
     if np.random.random() > 0.1:
         memory.human_prefix = 'Environment'
-        ipt = "a man coming to me. "
+        ipt = "a man coming to me. (information from environment)"
         while True:
             try:
                 output = agent_executor.run(input=ipt)

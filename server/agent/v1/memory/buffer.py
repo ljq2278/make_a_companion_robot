@@ -27,7 +27,6 @@ class ConversationBufferMemory(BaseChatMemory):
         else:
             return '\n'.join([x.content for x in self.chat_memory.messages])
 
-
     @property
     def memory_variables(self) -> List[str]:
         """Will always return list of memory variables.
@@ -43,15 +42,18 @@ class ConversationBufferMemory(BaseChatMemory):
     def load_from_file(self, directory):
         files = [x for x in os.listdir(directory) if x.split('.')[0].isdigit()]
         files = sorted(files, key=lambda x: int(x.split('.')[0]))
+        last_one = 'ai'
         for file in files:
             with open(os.path.join(directory, file), "r") as old_file:
                 lines = old_file.readlines()
                 for line in lines:
                     prefix = line.split(':')[0]
-                    if prefix == self.ai_prefix:
+                    if prefix == self.ai_prefix and last_one != 'ai':
                         self.chat_memory.add_ai_message(line)
-                    elif prefix == 'Environment' or prefix == 'Human':
+                        last_one = 'ai'
+                    elif (prefix == 'Environment' or prefix == 'Human') and last_one == 'ai':
                         self.chat_memory.add_user_message(line)
+                        last_one = 'other'
                     # elif prefix == self.env_prefix:
                     #     self.chat_memory.add_message(EnvMessage(content=line[5:]))
         return
@@ -80,4 +82,3 @@ class ConversationBufferMemory(BaseChatMemory):
             for i in reversed(range(1, save_period + 1)):
                 # prefix = self.env_prefix if i % 3 == 0 else self.human_prefix if i % 3 == 1 else self.ai_prefix
                 new_file.write(self.chat_memory.messages[-i].content + '\n')
-

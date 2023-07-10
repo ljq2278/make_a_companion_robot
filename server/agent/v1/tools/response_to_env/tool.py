@@ -10,6 +10,8 @@ from langchain.callbacks.manager import (
 )
 from langchain.tools.base import BaseTool
 from memory.buffer import ConversationBufferMemory
+
+
 # from langchain.schema.messages import get_buffer_string
 
 # def _print_func(text: str) -> None:
@@ -17,27 +19,29 @@ from memory.buffer import ConversationBufferMemory
 #     print(text)
 #
 
-class AskSelfRun(BaseTool):
+class ResponseToEnv(BaseTool):
     """Tool that adds the capability to ask user for input."""
 
-    name = "askSelf"
+    name = "responseToEnv"
     description = (
-        "Useful for when you want to know something about yourself, "
-        "input should be what you want to know about yourself."
+        "Useful for when you want to make appropriate response to the information from Environment, "
+        "input should be the information from Environment."
     )
 
     # prompt_func: Callable[[str], None] = Field(default_factory=lambda: _print_func)
     llm: LLM = None
-    memory:  ConversationBufferMemory = None
+    memory: ConversationBufferMemory = None
+
     def _run(
             self,
             query: str,
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ) -> str:
-        """Use the Human input tool."""
+        """Use the Env input tool."""
         # self.prompt_func(query)
         history = self.memory.buffer
-        return self.llm.predict(history+"\n\n"+query)
+        # sum_history = self.llm.predict(history + "\n\n summarize above information: ")
+        return self.llm.predict(history + "\n\nEnvironment: " + query)
         # return self.preset
 
     async def _arun(

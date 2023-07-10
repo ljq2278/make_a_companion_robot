@@ -38,11 +38,31 @@ Final Answer: hello!
 
 Question: what is your name
 Thought: I should ask myself to get my name
-Action: askself
+Action: askSelf
 Action Input: what is my name
 Observation: my name is XXX
 Thought: I now know the final answer
 Final Answer: my name is XXX
+
+Question: a man is coming to me. (information from environment)
+Thought: I should do some appropriate response to the environment information
+Action: responseToEnv
+Action Input: a man is coming to me.
+Observation: what is the reason he come to me?
+Thought: I now know the final answer
+Final Answer: maybe he want to chat with me
+
+Question: What is the difference between IPv4 and IPv6?
+Thought: I must know what is IPv4
+Action: duckduckgo
+Action Input: What is IPv4?
+Observation: IP stands for Internet Protocol and v4 stands for Version Four (IPv4). IPv4 was the primary version brought into action for production within the ARPANET in 1983. ...
+Thought: I must know what is IPv6
+Action: duckduckgo
+Action Input: What is IPv6?
+Observation: IPv6 or Internet Protocol Version 6 is an upgrade of IPv4. IP version 6 is a network layer protocol that allows data communications to pass packets over a network. ...
+Thought: I now know the final answer
+Final Answer: the difference between IPv4 and IPv6 is that IPv6 is the update version of IPv4 and it ...
 
 Begin!
 {chat_history}
@@ -58,14 +78,14 @@ Thought:{agent_scratchpad}"""
 # Thought: I now know the final answer
 # Final Answer: my name is John
 
-# Question: Can you tell my some recipes?
-# Thought: I must know what kind of recipe the questioner want
-# Action: human
-# Action Input: What kind of recipe do you want?
-# Observation: make a pizza
-# Thought: I must know how to make a pizza
+# Question: What is the difference between IPv4 and IPv6?
+# Thought: I must know what is IPv4
 # Action: duckduckgo
-# Action Input: how to make a pizza
-# Observation: buy a pizza from supermarket and put it in the oven to bake about 15 minutes and then you can enjoy the pizza
+# Action Input: What is IPv4?
+# Observation: IP stands for Internet Protocol and v4 stands for Version Four (IPv4). IPv4 was the primary version brought into action for production within the ARPANET in 1983. ...
+# Thought: I must know what is IPv6
+# Action: duckduckgo
+# Action Input: What is IPv6?
+# Observation: IPv6 or Internet Protocol Version 6 is an upgrade of IPv4. IP version 6 is a network layer protocol that allows data communications to pass packets over a network. ...
 # Thought: I now know the final answer
-# Final Answer: buy a pizza from supermarket and put it in the oven to bake about 15 minutes and then you can enjoy the pizza
+# Final Answer: the difference between IPv4 and IPv6 is that IPv6 is the update version of IPv4 and it ...
