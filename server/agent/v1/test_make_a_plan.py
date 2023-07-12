@@ -6,7 +6,7 @@ from tools.askself.tool import AskSelfRun
 from tools.response_to_env.tool import ResponseToEnv
 from memory.buffer import ConversationBufferMemory
 from memory.summary_buffer import ConversationSummaryBufferMemory
-from agents.mrkl.prompt_with_example import FORMAT_INSTRUCTIONS, PREFIX, SUFFIX
+from agents.mrkl.prompt_with_example_v2 import FORMAT_INSTRUCTIONS, PREFIX, SUFFIX
 from langchain import LLMChain
 import numpy as np
 import json
@@ -17,7 +17,7 @@ llm = get_llama_llm()
 
 nm = 'Eva'
 save_period = 10
-memory = ConversationSummaryBufferMemory(memory_key="chat_history", ai_prefix=nm + "(me)", llm=llm, max_token_limit=128)
+memory = ConversationSummaryBufferMemory(memory_key="chat_history", ai_prefix=nm + "(me)", llm=llm, max_token_limit=512)
 # memory.load_from_file('saved')
 
 
@@ -100,6 +100,7 @@ while True:
     memory.chat_memory.messages[-2].content = memory.human_prefix + ': ' + memory.chat_memory.messages[-2].content
     current_ans = parse_ans(memory.chat_memory.messages[-1].content)
     memory.chat_memory.messages[-1].content = memory.ai_prefix + ': ' + memory.chat_memory.messages[-1].content
+    print("\nconversation length: ", len(memory.chat_memory.messages), '\n')
     json.dump(current_ans, open('saved/current.txt', 'w', encoding='utf-8'))
     # if len(memory.chat_memory.messages) % save_period == 0:
     #     memory.save_to_file('saved', save_period)

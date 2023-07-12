@@ -7,8 +7,8 @@ from pydantic import Field
 
 from langchain.agents.agent import Agent, AgentExecutor, AgentOutputParser
 from langchain.agents.agent_types import AgentType
-from .output_parser import MRKLOutputParser
-from .prompt_with_example import FORMAT_INSTRUCTIONS, PREFIX, SUFFIX
+from .output_parser_v2 import MRKLOutputParser
+from .prompt_with_example_v2 import FORMAT_INSTRUCTIONS, PREFIX, SUFFIX
 from langchain.agents.tools import Tool
 from langchain.agents.utils import validate_tools_single_input
 from langchain.base_language import BaseLanguageModel

@@ -24,7 +24,7 @@ class ResponseToEnv(BaseTool):
 
     name = "responseToEnv"
     description = (
-        "Useful for when you want to make appropriate response to the information from Environment, "
+        "Useful for when you want to make appropriate response to the information from Environment. That means there is [information from environment] prompt"
         "input should be the information from Environment."
     )
 

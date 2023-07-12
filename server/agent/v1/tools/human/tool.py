@@ -46,7 +46,7 @@ class HumanInputRun(BaseTool):
         """Use the Human input tool."""
         self.prompt_func(query)
         # return self.input_func()
-        return "the action input is the final answer"
+        return "the action input is the final response"
 
     async def _arun(
         self,

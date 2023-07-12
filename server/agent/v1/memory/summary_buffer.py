@@ -57,8 +57,7 @@ class ConversationSummaryBufferMemory(BaseChatMemory, SummarizerMixin):
     def save_context(self, inputs: Dict[str, Any], outputs: Dict[str, str]) -> None:
         """Save context from this conversation to buffer."""
         super().save_context(inputs, outputs)
-        if len(self.chat_memory.messages) > 2:
-            self.prune()
+        self.prune()
 
     def prune(self) -> None:
         """Prune buffer if it exceeds max token limit"""
@@ -66,7 +65,7 @@ class ConversationSummaryBufferMemory(BaseChatMemory, SummarizerMixin):
         curr_buffer_length = self.llm.get_num_tokens_from_messages(buffer)
         if curr_buffer_length > self.max_token_limit:
             pruned_memory = []
-            while curr_buffer_length > self.max_token_limit:
+            while curr_buffer_length > self.max_token_limit and len(self.chat_memory.messages) >= 4:
                 pruned_memory.append(buffer.pop(0))
                 pruned_memory.append(buffer.pop(0))
                 curr_buffer_length = self.llm.get_num_tokens_from_messages(buffer)
