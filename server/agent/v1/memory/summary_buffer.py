@@ -1,5 +1,5 @@
 from typing import Any, Dict, List
-
+import os, re
 from pydantic import root_validator
 
 from langchain.memory.chat_memory import BaseChatMemory
@@ -77,3 +77,31 @@ class ConversationSummaryBufferMemory(BaseChatMemory, SummarizerMixin):
         """Clear memory contents."""
         super().clear()
         self.moving_summary_buffer = ""
+
+    def load_from_file(self, directory):
+        last_one = 'ai'
+        with open(os.path.join(directory, 'last_conversations.txt'), "r") as old_file:
+            lines = old_file.readlines()
+            for line in lines:
+                prefix = line.split(':')[0]
+                if prefix == self.ai_prefix and last_one != 'ai':
+                    self.chat_memory.add_ai_message(line)
+                    last_one = 'ai'
+                elif (prefix == 'Environment' or prefix == 'Human') and last_one == 'ai':
+                    self.chat_memory.add_user_message(line)
+                    last_one = 'other'
+                # elif prefix == self.env_prefix:
+                #     self.chat_memory.add_message(EnvMessage(content=line[5:]))
+        with open(os.path.join(directory, "memory.txt"), "r") as old_file:
+            summary = old_file.read()
+            self.moving_summary_buffer = summary
+        return
+
+    def save_to_file(self, directory):
+        os.remove(os.path.join(directory, "last_conversations.txt"))
+        with open(os.path.join(directory, "last_conversations.txt"), "w") as conversations_file:
+            for i in range(0, len(self.chat_memory.messages)):
+                conversations_file.write(self.chat_memory.messages[i].content + '\n')
+        os.remove(os.path.join(directory, "memory.txt"))
+        with open(os.path.join(directory, "memory.txt"), "w") as memory_file:
+            memory_file.write(self.moving_summary_buffer + '\n')

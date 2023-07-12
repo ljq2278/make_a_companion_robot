@@ -1,10 +1,11 @@
 from agents.mrkl.base import ZeroShotAgent, MRKLChain
+# from llm.gpt4all_llm import get_vicuna13b_llm
 from llm.llama import get_llama_llm
 from tools.ddg_search.tool import DuckDuckGoSearchRun
 from tools.human.tool import HumanInputRun
 from tools.askself.tool import AskSelfRun
 from tools.response_to_env.tool import ResponseToEnv
-from memory.buffer import ConversationBufferMemory
+# from memory.buffer import ConversationBufferMemory
 from memory.summary_buffer import ConversationSummaryBufferMemory
 from agents.mrkl.prompt_with_example_v2 import FORMAT_INSTRUCTIONS, PREFIX, SUFFIX
 from langchain import LLMChain
@@ -16,9 +17,10 @@ import json
 llm = get_llama_llm()
 
 nm = 'Eva'
-save_period = 10
-memory = ConversationSummaryBufferMemory(memory_key="chat_history", ai_prefix=nm + "(me)", llm=llm, max_token_limit=512)
-# memory.load_from_file('saved')
+max_iterations = 20
+conversation_size = 256
+memory = ConversationSummaryBufferMemory(memory_key="chat_history", ai_prefix=nm + "(me)", llm=llm, max_token_limit=conversation_size)
+memory.load_from_file('saved')
 
 
 tools = [
@@ -36,9 +38,7 @@ prompt = ZeroShotAgent.create_prompt(
     input_variables=["input", "chat_history", "agent_scratchpad"],
 )
 llm_chain = LLMChain(llm=llm, prompt=prompt)
-# agent_obj = ZeroShotAgent.from_llm_and_tools(
-#     llm, tools, callback_manager=None, verbose=True,
-# )
+
 agent_obj = ZeroShotAgent(
     llm_chain=llm_chain,
     tools=tools,
@@ -51,7 +51,7 @@ agent_executor = MRKLChain.from_agent_and_tools(
     tools=tools,
     # verbose=True,
     memory=memory,
-    max_iterations=5
+    max_iterations=max_iterations
 )
 current_ans = {
     "speech": "a man coming to me. ",
@@ -102,5 +102,4 @@ while True:
     memory.chat_memory.messages[-1].content = memory.ai_prefix + ': ' + memory.chat_memory.messages[-1].content
     print("\nconversation length: ", len(memory.chat_memory.messages), '\n')
     json.dump(current_ans, open('saved/current.txt', 'w', encoding='utf-8'))
-    # if len(memory.chat_memory.messages) % save_period == 0:
-    #     memory.save_to_file('saved', save_period)
+    memory.save_to_file('saved')

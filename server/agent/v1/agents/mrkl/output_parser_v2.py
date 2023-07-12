@@ -21,6 +21,7 @@ class MRKLOutputParser(AgentOutputParser):
 
         if includes_answer:
             return AgentFinish(
+                # {"output": text.split(FINAL_ANSWER_ACTION)[-1].split('\n')[0].strip()}, text
                 {"output": text.split(FINAL_ANSWER_ACTION)[-1].strip()}, text
             )
 
