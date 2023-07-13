@@ -33,6 +33,11 @@ class MRKLOutputParser(AgentOutputParser):
             #     )
             action = action_match.group(1).strip().split(' ')[0]
             action_input = action_match.group(2)
+            if action == "chat":
+                return AgentFinish(
+                    # {"output": text.split(FINAL_ANSWER_ACTION)[-1].split('\n')[0].strip()}, text
+                    {"output": action_input.strip(" ")}, action_input
+                )
             tool_input = action_input.strip(" ")
             # ensure if its a well formed SQL query we don't remove any trailing " chars
             if tool_input.startswith("SELECT ") is False:

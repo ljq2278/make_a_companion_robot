@@ -17,7 +17,7 @@ import json
 llm = get_llama_llm()
 
 nm = 'Eva'
-max_iterations = 20
+# max_iterations = 20
 conversation_size = 256
 memory = ConversationSummaryBufferMemory(memory_key="chat_history", ai_prefix=nm + "(me)", llm=llm, max_token_limit=conversation_size)
 memory.load_from_file('saved')
@@ -25,9 +25,9 @@ memory.load_from_file('saved')
 
 tools = [
     DuckDuckGoSearchRun(),
-    HumanInputRun(),
+    # HumanInputRun(),
     AskSelfRun(memory=memory, llm=llm),
-    ResponseToEnv(memory=memory, llm=llm)
+    # ResponseToEnv(memory=memory, llm=llm)
 ]
 
 prompt = ZeroShotAgent.create_prompt(
@@ -51,7 +51,7 @@ agent_executor = MRKLChain.from_agent_and_tools(
     tools=tools,
     # verbose=True,
     memory=memory,
-    max_iterations=max_iterations
+    # max_iterations=max_iterations
 )
 current_ans = {
     "speech": "a man coming to me. ",

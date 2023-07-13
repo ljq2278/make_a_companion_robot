@@ -35,17 +35,9 @@ Observation: my name is XXX
 Thought: I now know the final response
 Final Response: my name is XXX. [normal]
 
-Conversation_Input: a man is coming to me. (information from environment)
-Thought: I should do some appropriate response to the environment information
-Action: responseToEnv
-Action Input: a man is coming to me.
-Observation: what is the reason he come to me?
-Thought: I now know the final response
-Final Response: maybe he want to chat with me. [confused]
-
 Conversation_Input: Hi
 Thought: that is not a question. it is just chat with me.
-Action: human
+Action: chat
 Action Input: hello!
 Observation: the action input is the final response
 Final Response: hello! [happy]
@@ -67,7 +59,16 @@ Begin!
 Conversation_Input: {input}
 Thought:{agent_scratchpad}"""
 
-############################################################# human
+############################################################# chat
+
+# Conversation_Input: a man is coming to me. (information from environment)
+# Thought: I should do some appropriate response to the environment information
+# Action: responseToEnv
+# Action Input: a man is coming to me.
+# Observation: what is the reason he come to me?
+# Thought: I now know the final response
+# Final Response: maybe he want to chat with me. [confused]
+
 # Question: Can you tell my some recipes?
 # Thought: I must know what kind of recipe it wanted
 # Action: human

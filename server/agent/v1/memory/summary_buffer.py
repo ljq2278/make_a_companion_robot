@@ -13,6 +13,7 @@ class ConversationSummaryBufferMemory(BaseChatMemory, SummarizerMixin):
     max_token_limit: int = 2000
     moving_summary_buffer: str = ""
     memory_key: str = "history"
+    character: str = ""
 
     @property
     def buffer(self) -> List[BaseMessage]:
@@ -69,8 +70,8 @@ class ConversationSummaryBufferMemory(BaseChatMemory, SummarizerMixin):
                 pruned_memory.append(buffer.pop(0))
                 pruned_memory.append(buffer.pop(0))
                 curr_buffer_length = self.llm.get_num_tokens_from_messages(buffer)
-            self.moving_summary_buffer = self.predict_new_summary(
-                pruned_memory, self.moving_summary_buffer
+            self.moving_summary_buffer = self.character + self.predict_new_summary(
+                pruned_memory, self.moving_summary_buffer[len(self.character):]
             )
 
     def clear(self) -> None:
@@ -79,8 +80,10 @@ class ConversationSummaryBufferMemory(BaseChatMemory, SummarizerMixin):
         self.moving_summary_buffer = ""
 
     def load_from_file(self, directory):
+        with open(os.path.join(directory, "character.txt"), "r", encoding='utf-8') as old_file:
+            self.character = old_file.read()
         last_one = 'ai'
-        with open(os.path.join(directory, 'last_conversations.txt'), "r") as old_file:
+        with open(os.path.join(directory, 'last_conversations.txt'), "r", encoding='utf-8') as old_file:
             lines = old_file.readlines()
             for line in lines:
                 prefix = line.split(':')[0]
@@ -92,16 +95,16 @@ class ConversationSummaryBufferMemory(BaseChatMemory, SummarizerMixin):
                     last_one = 'other'
                 # elif prefix == self.env_prefix:
                 #     self.chat_memory.add_message(EnvMessage(content=line[5:]))
-        with open(os.path.join(directory, "memory.txt"), "r") as old_file:
+        with open(os.path.join(directory, "memory.txt"), "r", encoding='utf-8') as old_file:
             summary = old_file.read()
-            self.moving_summary_buffer = summary
+            self.moving_summary_buffer = self.character + summary
         return
 
     def save_to_file(self, directory):
         os.remove(os.path.join(directory, "last_conversations.txt"))
-        with open(os.path.join(directory, "last_conversations.txt"), "w") as conversations_file:
+        with open(os.path.join(directory, "last_conversations.txt"), "w", encoding='utf-8') as conversations_file:
             for i in range(0, len(self.chat_memory.messages)):
                 conversations_file.write(self.chat_memory.messages[i].content + '\n')
         os.remove(os.path.join(directory, "memory.txt"))
-        with open(os.path.join(directory, "memory.txt"), "w") as memory_file:
-            memory_file.write(self.moving_summary_buffer + '\n')
+        with open(os.path.join(directory, "memory.txt"), "w", encoding='utf-8') as memory_file:
+            memory_file.write(self.moving_summary_buffer[len(self.character):] + '\n')
