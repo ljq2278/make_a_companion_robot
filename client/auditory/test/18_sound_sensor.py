@@ -20,14 +20,13 @@ def makerobo_setup():
 def makerobo_loop():
 	makerobo_count = 0                                        # 计数值
 	while True:                                               # 无限循环
-		makerobo_voiceValue = ADC.read(0)                     # 读取AIN0上的模拟值
-		if True:
-		# if makerobo_voiceValue:                               # 当声音值不为0
+		makerobo_voiceValue = ADC.read(0)                     # 读取AIN0上的模拟值             
+		if makerobo_voiceValue:                               # 当声音值不为0
 			print ("Sound Value:", makerobo_voiceValue)       # 打印出声音值
 			if makerobo_voiceValue < 80:                      # 如果声音传感器读取值小于80
 				print ("Voice detected! ", makerobo_count)    # 打印出计数值
 				makerobo_count += 1                           # 计数值累加
-			time.sleep(0.1)                                   # 延时 200ms
+			time.sleep(0.2)                                   # 延时 200ms
 
 # 程序入口
 if __name__ == '__main__':

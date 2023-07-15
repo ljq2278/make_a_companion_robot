@@ -35,30 +35,29 @@ def read(chn): #通道选择，范围是0-3之间
 			bus.write_byte(address,0x42)
 		if chn == 3:
 			bus.write_byte(address,0x43)
-		bus.read_byte(address)  # 开始进行读取转换
-		# print('开始进行读取转换: ', bus.read_byte(address)) # 开始进行读取转换
+		bus.read_byte(address) # 开始进行读取转换
 	except Exception as e:
 		print ("Address: %s" % address)
 		print (e)
 	return bus.read_byte(address)
 
 # 模块输出模拟量控制，范围为0-255
-# def write(val):
-# 	try:
-# 		temp = val # 将数值赋给temmp 变量
-# 		temp = int(temp) # 将字符串转换为整型
-# 		# 在终端上打印temp以查看，否则将注释掉
-# 		bus.write_byte_data(address, 0x40, temp)
-# 	except Exception as e:
-# 		print ("Error: Device address: 0x%2X" % address)
-# 		print (e)
-#
-# if __name__ == "__main__":
-# 	setup(0x48)
-# 	while True:
-# 		print ('AIN0 = ', read(0))
-# 		print ('AIN1 = ', read(1))
-# 		tmp = read(0)
-# 		tmp = tmp*(255-125)/255+125 # 低于125时LED不会亮，所以请将“0-255”转换为“125-255”
-# 		write(tmp)
-# #		time.sleep(0.3)
+def write(val):
+	try:
+		temp = val # 将数值赋给temmp 变量
+		temp = int(temp) # 将字符串转换为整型
+		# 在终端上打印temp以查看，否则将注释掉
+		bus.write_byte_data(address, 0x40, temp)
+	except Exception as e:
+		print ("Error: Device address: 0x%2X" % address)
+		print (e)
+
+if __name__ == "__main__":
+	setup(0x48)
+	while True:
+		print ('AIN0 = ', read(0))
+		print ('AIN1 = ', read(1))
+		tmp = read(0)
+		tmp = tmp*(255-125)/255+125 # 低于125时LED不会亮，所以请将“0-255”转换为“125-255”
+		write(tmp)
+#		time.sleep(0.3)

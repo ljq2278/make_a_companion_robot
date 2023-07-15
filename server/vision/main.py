@@ -17,7 +17,7 @@ app = FastAPI()
 model = YOLO("../../../models/yolov8x.pt")
 
 
-@app.post("/detect/")
+@app.post("/vision/")
 async def detect_objects(file: UploadFile = File(...)):
     logging.debug("Image received")
 

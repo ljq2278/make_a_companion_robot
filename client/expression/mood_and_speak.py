@@ -1,7 +1,7 @@
 import requests
 import queue
-from read_alound_and_show_text import read_alound_and_show_text
-from show_mood import show_mood
+from lib.read_alound_and_show_text import read_alound_and_show_text
+from lib.show_mood import show_mood
 import time
 import json
 

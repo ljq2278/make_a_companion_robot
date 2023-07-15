@@ -42,6 +42,8 @@ def _draw_rotated_text(image, text, position, angle, font, fill=(255, 255, 255))
 
 def read_alound_and_show_text(txt):
     # Create TFT LCD display class.
+    if txt == "":
+        txt = "Oop, it seem that I dont know what to say ! "
     disp = TFT.ST7796(DC, rst=RST, spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE, max_speed_hz=64000000))
     # Initialize display.
     disp.begin()
@@ -51,8 +53,8 @@ def read_alound_and_show_text(txt):
     font = ImageFont.truetype('assets/Poppins-BoldItalic.ttf', font_size)
     txt_lines_str = ''.join([txt[i] if (i + 1) % line_len != 0 else txt[i] + '\n' for i in range(0, len(txt))])
     txt_lines = txt_lines_str.split('\n')
-    for i in range(0,len(txt_lines),page_lines):
-        page_txt = '\n'.join(txt_lines[i:i+page_lines])
+    for i in range(0, len(txt_lines), page_lines):
+        page_txt = '\n'.join(txt_lines[i:i + page_lines])
         disp.clear((0, 0, 0))
         _draw_rotated_text(disp.buffer, page_txt, (0, 10), 90, font, fill=(255, 255, 255))
         disp.display()

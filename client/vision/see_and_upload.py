@@ -2,8 +2,9 @@ import cv2
 import requests
 import time
 
+
 # Set the server URL (adjust the IP address and port if needed)
-SERVER_URL = "http://192.168.1.8:8001/detect/"
+SERVER_URL = "http://192.168.1.8:8002/vision/"
 
 
 def send_image(image):
