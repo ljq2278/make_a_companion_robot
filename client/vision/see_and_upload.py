@@ -44,4 +44,4 @@ def capture_and_send_images(cam_id, fps):
 
 if __name__ == "__main__":
     # Change the '0' to the appropriate camera ID if needed
-    capture_and_send_images(cam_id=0, fps=10)
+    capture_and_send_images(cam_id=0, fps=1)

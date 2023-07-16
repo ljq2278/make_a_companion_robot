@@ -44,7 +44,7 @@ import numpy as np
 from scipy.io.wavfile import read
 
 app = FastAPI()
-model = whisper.load_model("base")
+model = whisper.load_model("base.en")
 output_wav_file = "./auditory/record.wav"
 output_txt_file = "./auditory/record.txt"
 

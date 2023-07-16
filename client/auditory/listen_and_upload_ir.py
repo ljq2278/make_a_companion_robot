@@ -92,18 +92,18 @@ def callback(indata, frames, time, status):
         print('on record ... ')
         sf_file.write(indata)
         # Check for silence
-        amplitude = np.abs(indata).mean()
-        if amplitude < SILENCE_THRESHOLD:
-            if tm.time() - start_time > SILENCE_TIME:
-                # Stop recording
-                print('stop record with silent ... ')
-                reset_when_over()
-                # Send audio file to server
-                with open(RECORD_FILE, 'rb') as f:
-                    print('send record ... ')
-                    requests.post(SERVER_URL, files={'file': f})
-        else:
-            start_time = tm.time()
+        # amplitude = np.abs(indata).mean()
+        # if amplitude < SILENCE_THRESHOLD:
+        #     if tm.time() - start_time > SILENCE_TIME:
+        #         # Stop recording
+        #         print('stop record with silent ... ')
+        #         reset_when_over()
+        #         # Send audio file to server
+        #         with open(RECORD_FILE, 'rb') as f:
+        #             print('send record ... ')
+        #             requests.post(SERVER_URL, files={'file': f})
+        # else:
+        #     start_time = tm.time()
         return
 
 
@@ -112,8 +112,8 @@ def callback(indata, frames, time, status):
 makerobo_Bpin = 27  # RGB—LED,蓝色管脚定义
 makerobo_blocking = 0  # 判断值
 
-rgb_Lv = [100, 20, 0]  # RGB 亮度配置
-rgb_color = [00, 00, 100]  # RGB 颜色配置
+rgb_Lv = [0, 20]  # RGB 亮度配置
+rgb_color = 0  # RGB 颜色配置
 
 
 # GPIO初始化设置
@@ -128,16 +128,17 @@ def makerobo_setup():
 
 
 def RGB_and_listen_control(config):
-    print("rgb_color[2], rgb_Lv[2]: ", rgb_color[2], rgb_Lv[2])
-    if config == 'KEY_VOLUMEDOWN' and rgb_color[2] != rgb_Lv[0]:  # 第三行第一个
-        rgb_color[2] = rgb_Lv[0]
+    # print("rgb_color[2], rgb_Lv[2]: ", rgb_color[2], rgb_Lv[2])
+    global rgb_color
+    if config == 'KEY_VOLUMEDOWN' and rgb_color != rgb_Lv[0]:  # 第三行第一个
+        rgb_color = rgb_Lv[0]
         print('stop listen')
         fl = open(STOP_FILE, 'w', encoding='utf-8')
         fl.write("0")
         fl.close()
 
-    if config == 'KEY_VOLUMEUP' and rgb_color[2] != rgb_Lv[2]:  # 第三行第二个
-        rgb_color[2] = rgb_Lv[2]
+    if config == 'KEY_VOLUMEUP' and rgb_color != rgb_Lv[1]:  # 第三行第二个
+        rgb_color= rgb_Lv[1]
         print('start listen')
         fl = open(START_FILE, 'w', encoding='utf-8')
         fl.write("1")
@@ -152,7 +153,8 @@ def makerobo_loop():
             for code in s:
                 print("Command: ", code["config"])  # 调试信息，可以具体知道按下了哪个按键
                 RGB_and_listen_control(code["config"])  # 调用控制RGB函数
-                p_B.ChangeDutyCycle(100 - rgb_color[2])  # RGB-LED 颜色设置 (改变PWM占空比)
+                p_B.ChangeDutyCycle(rgb_color)  # RGB-LED 颜色设置 (改变PWM占空比)
+        tm.sleep(1)
 
 
 # 释放函数

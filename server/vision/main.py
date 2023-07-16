@@ -14,7 +14,7 @@ app = FastAPI()
 
 # Initialize the YOLO model
 # model = YOLO.from_pretrained("../../yolov8x.pt")
-model = YOLO("../../../models/yolov8x.pt")
+model = YOLO("../../../models/yolov8n.pt")
 
 
 @app.post("/vision/")
