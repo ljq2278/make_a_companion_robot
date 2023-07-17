@@ -4,7 +4,7 @@ import time
 
 
 # Set the server URL (adjust the IP address and port if needed)
-SERVER_URL = "http://192.168.1.8:8002/vision/"
+SERVER_URL = "http://192.168.1.9:8002/vision/"
 
 
 def send_image(image):

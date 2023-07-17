@@ -7,7 +7,7 @@ import json
 
 data_queue = queue.Queue()
 
-server_url = "http://192.168.1.8:8001/expression/"
+server_url = "http://192.168.1.9:8001/expression/"
 
 while True:
     json_data = {}
