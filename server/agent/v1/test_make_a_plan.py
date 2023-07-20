@@ -122,8 +122,8 @@ if __name__ == '__main__':
         # chat with human
         else:
             memory.human_prefix = 'Human'
-            # ipt = get_human_input_from_file()
-            ipt = get_human_input_from_terminal()
+            ipt = get_human_input_from_file()
+            # ipt = get_human_input_from_terminal()
             if ipt == "":
                 continue
             else:

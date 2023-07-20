@@ -3,7 +3,7 @@ import requests, copy
 from lib.draw_txt import draw_text, clear_text
 
 # Find the correct event number for your USB keyboard in /dev/input
-dev = InputDevice('/dev/input/event6')
+dev = InputDevice('/dev/input/event4')
 
 # Grab the device to restrict it to this process only
 dev.grab()

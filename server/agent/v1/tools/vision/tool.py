@@ -19,8 +19,8 @@ class VisionTool(BaseTool):
 
     name = "vision"
     description = (
-        "Useful for when you need to use vision function to interact with the world"
-        "Input should be one of the following params [look around, look at left, look at right, look ahead]."
+        "Useful for when you need to use vision function to interact with the world."
+        "Input is the direction that you want to look at. It should be one of [around, left, right, ahead]."
     )
     api_wrapper: DuckDuckGoSearchAPIWrapper = Field(
         default_factory=DuckDuckGoSearchAPIWrapper
@@ -46,17 +46,23 @@ class VisionTool(BaseTool):
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ) -> str:
         """Use the tool."""
+        try:
+            os.remove(self.action_complete_file)
+        except Exception as e:
+            pass
         f = open(self.action_file, 'w', encoding='utf-8')
-        if "look around" in query:
+        if "around" in query:
             f.write("look_around")
-        elif "look at left" in query:
+        elif "left" in query:
             f.write("look_at_left")
-        elif "look at right" in query:
+        elif "right" in query:
             f.write("look_at_right")
-        elif "look ahead" in query:
+        elif "ahead" in query or "front" in query:
             f.write("look_ahead")
+        else:
+            f.write("look_around")
         f.close()
-        ret = self._get_objs()
+        ret = "I can see " + self._get_objs()
         print(ret)
         return ret
 

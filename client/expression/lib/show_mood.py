@@ -14,30 +14,30 @@ import board
 import digitalio
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
-
+from utils.path import PRJ_PATH
 
 exp_ent = {
-    'norm_e_l': ["￣", (22, 20), 30, "assets/STHUPO.TTF"],
-    'norm_e_r': ["￣", (76, 20), 30, "assets/STHUPO.TTF"],
-    'norm_m': ["~", (54, 40), 30, "assets/STHUPO.TTF"],
-    'hap_e_l': ["^", (28, 20), 30, "assets/STHUPO.TTF"],
-    'hap_e_r': ["^", (84, 20), 30, "assets/STHUPO.TTF"],
-    'hap_m': ["︶", (48, 30), 30, "assets/STHUPO.TTF"],
-    'sad_e_l': ["￣", (22, 20), 30, "assets/STHUPO.TTF"],
-    'sad_e_r': ["￣", (76, 20), 30, "assets/STHUPO.TTF"],
-    'sad_m': ["|  へ   |", (32, 24), 20, "assets/STHUPO.TTF"],
-    'ama_e_l': ["⊙", (22, 10), 30, "assets/STHUPO.TTF"],
-    'ama_e_r': ["⊙", (76, 10), 30, "assets/STHUPO.TTF"],
-    'ama_m': ["o", (56, 20), 35, "assets/Symbola.ttf"],
-    'sca_e_l': ["o", (30, 10), 30, "assets/STHUPO.TTF"],
-    'sca_e_r': ["o", (82, 10), 30, "assets/STHUPO.TTF"],
-    'sca_m': ["﹏", (47, 12), 35, "assets/Symbola.ttf"],
-    'conf_e_l': [".", (30, 5), 30, "assets/STHUPO.TTF"],
-    'conf_e_r': [".", (82, 5), 30, "assets/STHUPO.TTF"],
-    'conf_m': ["￣", (50, 40), 24, "assets/STHUPO.TTF"],
-    'ang_e_l': ["￣", (22, 24), 30, "assets/STHUPO.TTF"],
-    'ang_e_r': ["￣", (76, 24), 30, "assets/STHUPO.TTF"],
-    'ang_m': ["へ", (56, 32), 20, "assets/STHUPO.TTF"],
+    'norm_e_l': ["￣", (22, 20), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'norm_e_r': ["￣", (76, 20), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'norm_m': ["~", (54, 40), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'hap_e_l': ["^", (28, 20), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'hap_e_r': ["^", (84, 20), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'hap_m': ["︶", (48, 30), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'sad_e_l': ["￣", (22, 20), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'sad_e_r': ["￣", (76, 20), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'sad_m': ["|  へ   |", (32, 24), 20, PRJ_PATH+"assets/STHUPO.TTF"],
+    'ama_e_l': ["⊙", (22, 10), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'ama_e_r': ["⊙", (76, 10), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'ama_m': ["o", (56, 20), 35, PRJ_PATH+"assets/Symbola.ttf"],
+    'sca_e_l': ["o", (30, 10), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'sca_e_r': ["o", (82, 10), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'sca_m': ["﹏", (47, 12), 35, PRJ_PATH+"assets/Symbola.ttf"],
+    'conf_e_l': [".", (30, 5), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'conf_e_r': [".", (82, 5), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'conf_m': ["￣", (50, 40), 24, PRJ_PATH+"assets/STHUPO.TTF"],
+    'ang_e_l': ["￣", (22, 24), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'ang_e_r': ["￣", (76, 24), 30, PRJ_PATH+"assets/STHUPO.TTF"],
+    'ang_m': ["へ", (56, 32), 20, PRJ_PATH+"assets/STHUPO.TTF"],
 }
 
 
@@ -53,13 +53,13 @@ def _draw_confuse(drw):
     _draw_organ(exp_ent['conf_e_l'], drw)
     _draw_organ(exp_ent['conf_e_r'], drw)
     _draw_organ(exp_ent['conf_m'], drw)
-    drw.text(xy=(100, 20), text="?", font=ImageFont.truetype(font="assets/Symbola.ttf", size=30), fill=255)
+    drw.text(xy=(100, 20), text="?", font=ImageFont.truetype(font=PRJ_PATH+"assets/Symbola.ttf", size=30), fill=255)
 
 def _draw_amaze(drw):
     _draw_organ(exp_ent['ama_e_l'], drw)
     _draw_organ(exp_ent['ama_e_r'], drw)
     _draw_organ(exp_ent['ama_m'], drw)
-    drw.text(xy=(110, 20), text="!", font=ImageFont.truetype(font="assets/Symbola.ttf", size=30), fill=255)
+    drw.text(xy=(110, 20), text="!", font=ImageFont.truetype(font=PRJ_PATH+"assets/Symbola.ttf", size=30), fill=255)
 
 def _draw_sad(drw):
     _draw_organ(exp_ent['sad_e_l'], drw)

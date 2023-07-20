@@ -6,6 +6,7 @@ import time
 import lib.ST7796 as TFT
 import Adafruit_GPIO as GPIO
 import Adafruit_GPIO.SPI as SPI
+from utils.path import PRJ_PATH
 
 # Initialize the pyttsx3 engine
 engine = pyttsx3.init()
@@ -50,7 +51,7 @@ def read_alound_and_show_text(txt):
     # Clear the display to a red background.
     # Can pass any tuple of red, green, blue values (from 0 to 255 each).
     # Write two lines of white text on the buffer, rotated 90 degrees counter clockwise.
-    font = ImageFont.truetype('assets/Poppins-BoldItalic.ttf', font_size)
+    font = ImageFont.truetype(PRJ_PATH + 'assets/Poppins-BoldItalic.ttf', font_size)
     txt_lines_str = ''.join([txt[i] if (i + 1) % line_len != 0 else txt[i] + '\n' for i in range(0, len(txt))])
     txt_lines = txt_lines_str.split('\n')
     for i in range(0, len(txt_lines), page_lines):

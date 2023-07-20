@@ -5,7 +5,7 @@ import time
 import lib.ST7796 as TFT
 import Adafruit_GPIO as GPIO
 import Adafruit_GPIO.SPI as SPI
-
+from utils.path import PRJ_PATH
 # Raspberry Pi configuration.
 DC = 21
 RST = 22
@@ -49,7 +49,7 @@ def draw_text(s):
     # Create TFT LCD display class.
 
     if s != "" and (cur_posi[0] < width and cur_posi[1] < height):
-        _draw_rotated_text(disp.buffer, s, cur_posi, 90, ImageFont.truetype(font="assets/STHUPO.TTF", size=font_size))
+        _draw_rotated_text(disp.buffer, s, cur_posi, 90, ImageFont.truetype(font=PRJ_PATH+"assets/STHUPO.TTF", size=font_size))
         if cur_posi[0] >= width - font_size // 2:
             cur_posi[0] = 0
             cur_posi[1] += font_size

@@ -16,7 +16,7 @@ param_to_angle = {
     "look_at_right": 45,
     "look_around": -90,
 }
-turn_angle_speed = 2
+turn_angle_speed = 5
 
 
 def turn_angle(src, dest):
@@ -34,18 +34,20 @@ def act_and_send_image(param):
         if param_to_angle[param] > 0:
             if param_to_angle[param] != 90:
                 turn_angle(start_angle, param_to_angle[param])
+            kit.servo[3].angle = None
+            time.sleep(1)
             send_image(complete='true')
         else:  # look_around
             turn_angle(start_angle, 45)
+            time.sleep(1)
             send_image()
-            time.sleep(0.5)
             turn_angle(45, 135)
+            time.sleep(1)
             send_image()
-            time.sleep(0.5)
             turn_angle(135, 90)
+            kit.servo[3].angle = None
+            time.sleep(1)
             send_image(complete='true')
-            time.sleep(0.5)
-        kit.servo[3].angle = None
         return ""
     else:
         print("invalid param: ", param)
