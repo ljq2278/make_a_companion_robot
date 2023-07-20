@@ -4,7 +4,6 @@ from agents.mrkl.base import ZeroShotAgent, MRKLChain
 # from llm.gpt4all_llm import get_vicuna13b_llm
 from llm.llama import get_llama_llm
 from tools.ddg_search.tool import DuckDuckGoSearchRun
-from tools.vision.tool import VisionTool
 from tools.human.tool import HumanInputRun
 from tools.askself.tool import AskSelfRun
 from tools.response_to_env.tool import ResponseToEnv
@@ -83,7 +82,6 @@ if __name__ == '__main__':
         # HumanInputRun(),
         AskSelfRun(memory=memory, llm=llm),
         # ResponseToEnv(memory=memory, llm=llm)
-        VisionTool(),
     ]
     prompt = ZeroShotAgent.create_prompt(
         tools,
@@ -122,8 +120,8 @@ if __name__ == '__main__':
         # chat with human
         else:
             memory.human_prefix = 'Human'
-            # ipt = get_human_input_from_file()
-            ipt = get_human_input_from_terminal()
+            ipt = get_human_input_from_file()
+            # ipt = get_human_input_from_terminal()
             if ipt == "":
                 continue
             else:

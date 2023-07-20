@@ -13,7 +13,9 @@ import soundfile as sf
 from DFRobot_DF2301Q import *
 
 DF2301Q = DFRobot_DF2301Q_I2C(i2c_addr=DF2301Q_I2C_ADDR, bus=1)
-
+devices = sd.query_devices()
+for i, device in enumerate(devices):
+    print(f"{i}: {device['name']}")
 # Constants
 SERVER_URL = "http://192.168.1.9:8003/auditory/"
 SILENCE_THRESHOLD = 0.1
@@ -22,7 +24,7 @@ START_FILE = "wake_signal.txt"
 STOP_FILE = "over_signal.txt"
 RECORD_FILE = "record.wav"
 # SAMPLE_RATE = 16000
-SAMPLE_RATE = 16000
+SAMPLE_RATE = 44100
 SUB_TYPE = "PCM_16"
 CHANNELS = 2
 DEVICE = 2
