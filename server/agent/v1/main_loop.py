@@ -4,9 +4,10 @@ from agents.mrkl.base import ZeroShotAgent, MRKLChain
 # from llm.gpt4all_llm import get_vicuna13b_llm
 from llm.llama import get_llama_llm
 from tools.ddg_search.tool import DuckDuckGoSearchRun
-from tools.vision.tool import VisionTool
+from tools.look.tool import LookTool
 from tools.move.tool import MoveTool
-from tools.human.tool import HumanInputRun
+from tools.rotate.tool import RotateTool
+# from tools.human.tool import HumanInputRun
 from tools.askself.tool import AskSelfRun
 from tools.response_to_env.tool import ResponseToEnv
 from sense.vision import get_seeing
@@ -85,8 +86,9 @@ if __name__ == '__main__':
         # HumanInputRun(),
         AskSelfRun(memory=memory, llm=llm),
         # ResponseToEnv(memory=memory, llm=llm)
-        VisionTool(),
+        LookTool(),
         MoveTool(),
+        RotateTool(),
     ]
     prompt = ZeroShotAgent.create_prompt(
         tools,

@@ -15,7 +15,7 @@ from langchain.tools.base import BaseTool
 from langchain.utilities.duckduckgo_search import DuckDuckGoSearchAPIWrapper
 
 
-class VisionTool(BaseTool):
+class LookTool(BaseTool):
     name = "look"
     description = (
         "Useful for when you need to use vision function to interact with the world."

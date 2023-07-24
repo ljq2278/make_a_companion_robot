@@ -6,8 +6,7 @@ from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import JSONResponse
 import logging
 from utils.path import ACTION_FILE, ACTION_RESULT_FILE, ACTION_FLAG_FILE
-from action.lib.vision import get_vision_result
-from action.lib.move import get_move_result
+from action.lib.get_result import get_vision_result, get_move_result, get_rotate_result
 
 logging.basicConfig(level=logging.DEBUG)
 # from yolov5.yolo import YOLO
@@ -44,6 +43,8 @@ async def do_action(state: str = Form(...)):
             res = get_vision_result()
         elif cur_action == "move":
             res = get_move_result()
+        elif cur_action == "rotate":
+            res = get_rotate_result()
         print(res)
         f = open(action_result_file, 'w', encoding='utf-8')
         f.write(res)

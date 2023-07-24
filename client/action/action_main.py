@@ -27,14 +27,14 @@ def get_order_and_act():
         order_dict = json.loads(recv_order, encoding='utf-8')
         if order_dict["action"] == "move":
             if order_dict["direct"] == "backward":
-                m_down(speed, int(order_dict["dist"]))
+                m_down(speed, int(float(order_dict["dist"])))
             elif order_dict["direct"] == "forward":
-                m_up(speed, int(order_dict["dist"]))
+                m_up(speed, int(float(order_dict["dist"])))
         elif order_dict["action"] == "rotate":
             if order_dict["direct"] == "left":
-                r_left(speed, int(order_dict["angle"]))
+                r_left(speed, int(float(order_dict["angle"])))
             elif order_dict["direct"] == "right":
-                r_right(speed, int(order_dict["angle"]))
+                r_right(speed, int(float(order_dict["angle"])))
         elif order_dict["action"] == "look":
             if order_dict["direct"] == "left":
                 l_left()

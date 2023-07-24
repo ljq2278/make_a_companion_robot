@@ -13,7 +13,7 @@ from langchain.callbacks.manager import (
 from langchain.tools.base import BaseTool
 
 
-class MoveTool(BaseTool):
+class RotateTool(BaseTool):
     name = "rotate"
     description = (
         "Useful for when you want to change your move or vision base direction."
