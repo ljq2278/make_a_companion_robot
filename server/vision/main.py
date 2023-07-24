@@ -5,7 +5,8 @@ from typing import Union
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import JSONResponse
 import logging
-from utils.path import VISION_ACTION_FILE, VISION_ACTION_COMPLETE_FILE, VISION_ACTION_RESULT_FILE, MODEL_PATH
+from utils.path import MODEL_PATH, VISION_DATA
+from fastapi.responses import Response
 
 logging.basicConfig(level=logging.DEBUG)
 # from yolov5.yolo import YOLO
@@ -15,19 +16,16 @@ app = FastAPI()
 
 # Initialize the YOLO model
 # model = YOLO.from_pretrained("../../yolov8x.pt")
-model = YOLO(MODEL_PATH+"yolov8m.pt")
+model = YOLO(MODEL_PATH + "yolov8m.pt")
 model.to("cpu")
-output_txt_file = VISION_ACTION_RESULT_FILE
-input_txt_file = VISION_ACTION_FILE
-action_complete_file = VISION_ACTION_COMPLETE_FILE
+output_txt_file = VISION_DATA
 last_modify_time = None
 
 
 @app.post("/vision/")
-async def detect_objects(file: UploadFile = File(...), complete: str = Form(...)):
+async def detect_objects(file: UploadFile = File(...)):
     global last_modify_time, input_txt_file
-    print("file: ", file.filename, "\n")
-    print("name: ", complete, "\n")
+
     logging.debug("Image received")
 
     # Load the image from the uploaded file
@@ -44,8 +42,6 @@ async def detect_objects(file: UploadFile = File(...), complete: str = Form(...)
 
     # Extract object names and bounding boxes
     objects = []
-    action = ""
-
     f = open(output_txt_file, 'w', encoding='utf-8')
     for i in range(0, len(results[0].boxes.xyxy.tolist())):
         x1, y1, x2, y2 = results[0].boxes.xyxy.tolist()[i]
@@ -53,14 +49,5 @@ async def detect_objects(file: UploadFile = File(...), complete: str = Form(...)
         objects.append({"name": name, "bbox": [x1, y1, x2, y2]})
         f.write(name + "\n")
     f.close()
-    if complete == "true":
-        f = open(action_complete_file, 'w', encoding='utf-8')
-        f.write("1")
-        f.close()
-    if input_txt_file is None or os.path.getmtime(input_txt_file) != last_modify_time:
-        f = open(input_txt_file, 'r', encoding='utf-8')
-        action = f.read()
-        f.close()
-        last_modify_time = os.path.getmtime(input_txt_file)
     # return JSONResponse(content={"objects": objects})
-    return JSONResponse(content={"action": action})
+    return Response(status_code=200)

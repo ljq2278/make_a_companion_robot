@@ -1,0 +1,1 @@
+{"action":"move","direct":"forward","angle":"90","dist":"3"}

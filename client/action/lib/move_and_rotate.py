@@ -25,7 +25,7 @@ L_Motor.start(0)
 R_Motor = GPIO.PWM(PWMB, 100)
 R_Motor.start(0)
 
-def t_stop():
+def _stop():
     L_Motor.ChangeDutyCycle(0)
     GPIO.output(AIN2, False)  # AIN2
     GPIO.output(AIN1, False)  # AIN1
@@ -34,7 +34,7 @@ def t_stop():
     GPIO.output(BIN1, False)  # BIN1
 
 
-def t_up(speed, t_time):
+def m_up(speed, t_time):
     L_Motor.ChangeDutyCycle(speed)
     GPIO.output(AIN2, False)  # AIN2
     GPIO.output(AIN1, True)  # AIN1
@@ -42,10 +42,10 @@ def t_up(speed, t_time):
     GPIO.output(BIN2, False)  # BIN2
     GPIO.output(BIN1, True)  # BIN1
     time.sleep(t_time)
-    t_stop()
+    _stop()
 
 
-def t_down(speed, t_time):
+def m_down(speed, t_time):
     L_Motor.ChangeDutyCycle(speed)
     GPIO.output(AIN2, True)  # AIN2
     GPIO.output(AIN1, False)  # AIN1
@@ -53,32 +53,28 @@ def t_down(speed, t_time):
     GPIO.output(BIN2, True)  # BIN2
     GPIO.output(BIN1, False)  # BIN1
     time.sleep(t_time)
-    t_stop()
+    _stop()
 
-
-def t_left(speed, t_time):
+def r_left(speed, t_angle):
     L_Motor.ChangeDutyCycle(speed)
     GPIO.output(AIN2, True)  # AIN2
     GPIO.output(AIN1, False)  # AIN1
     R_Motor.ChangeDutyCycle(speed)
     GPIO.output(BIN2, False)  # BIN2
     GPIO.output(BIN1, True)  # BIN1
-    time.sleep(1)
-    t_up(speed,t_time)
-    t_stop()
+    time.sleep(t_angle/90)
+    _stop()
 
 
-def t_right(speed, t_time):
+def r_right(speed, t_angle):
     L_Motor.ChangeDutyCycle(speed)
     GPIO.output(AIN2, False)  # AIN2
     GPIO.output(AIN1, True)  # AIN1
     R_Motor.ChangeDutyCycle(speed)
     GPIO.output(BIN2, True)  # BIN2
     GPIO.output(BIN1, False)  # BIN1
-    time.sleep(1)
-    t_up(speed,t_time)
-    t_stop()
-
+    time.sleep(t_angle/90)
+    _stop()
 
 if __name__ == '__main__':
     try:

@@ -2,7 +2,7 @@
 import os.path
 import time
 import json
-import warnings
+import re
 from typing import Any, Optional
 from server.utils.path import ACTION_RESULT_FILE, ACTION_FILE
 
@@ -14,32 +14,29 @@ from langchain.tools.base import BaseTool
 
 
 class MoveTool(BaseTool):
-    name = "move"
+    name = "rotate"
     description = (
-        "Useful for when you want to move to interact with the world."
+        "Useful for when you want to change your move or vision base direction."
         "Useful for when you want to find somthing different."
-        "Input is the (Direction,Distance) that you want move. "
-        "Direction should be one of (forward/backward). "
-        "Distance should be one of (1cm/2cm/3cm/4cm). "
-        "for example: ```action: move; action input: forward, 1cm```"
+        "Input is the (Direction,Angle) that you want rotate. "
+        "Direction should be one of (left/right). "
+        "Angle should be from 0 to 180. "
+        "for example: ```action: rotate; action input: left, 90```"
     )
 
     action_result_file = ACTION_RESULT_FILE
     # vision_result_file = VISION_RESULT_FILE
     action_file = ACTION_FILE
-
+    pattern = r'\d+(\.\d+)?'
     def _get_act_from_query(self, query):
-        direct = "forward"
-        if "backward" in query:
-            direct = "backward"
-        dist = "0"
-        if "3" in query:
-            dist = 3
-        elif "2" in query:
-            dist = 2
-        elif "1" in query:
-            dist = 1
-        return {"action": "move", "direct": direct, "dist": dist}
+        direct = "left"
+        if "right" in query:
+            direct = "right"
+        angle = "0"
+        match = re.search(self.pattern, query)
+        if match:
+            angle = float(match.group())
+        return {"action": "rotate", "direct": direct, "angle": str(angle)}
 
     def _run(
             self,

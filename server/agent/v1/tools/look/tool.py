@@ -1,45 +1,37 @@
 """Tool for the DuckDuckGo search API."""
+import json
 import os.path
 import time
-import json
 import warnings
 from typing import Any, Optional
 from server.utils.path import ACTION_RESULT_FILE, ACTION_FILE
+from pydantic import Field
 
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
 from langchain.tools.base import BaseTool
+from langchain.utilities.duckduckgo_search import DuckDuckGoSearchAPIWrapper
 
 
-class MoveTool(BaseTool):
-    name = "move"
+class VisionTool(BaseTool):
+    name = "look"
     description = (
-        "Useful for when you want to move to interact with the world."
-        "Useful for when you want to find somthing different."
-        "Input is the (Direction,Distance) that you want move. "
-        "Direction should be one of (forward/backward). "
-        "Distance should be one of (1cm/2cm/3cm/4cm). "
-        "for example: ```action: move; action input: forward, 1cm```"
+        "Useful for when you need to use vision function to interact with the world."
+        "Input is the direction that you want to look at. It should be one of (left/right/up)."
     )
 
     action_result_file = ACTION_RESULT_FILE
-    # vision_result_file = VISION_RESULT_FILE
     action_file = ACTION_FILE
 
     def _get_act_from_query(self, query):
-        direct = "forward"
-        if "backward" in query:
-            direct = "backward"
-        dist = "0"
-        if "3" in query:
-            dist = 3
-        elif "2" in query:
-            dist = 2
-        elif "1" in query:
-            dist = 1
-        return {"action": "move", "direct": direct, "dist": dist}
+        direct = "up"
+        if "left" in query:
+            direct = "left"
+        elif "right" in query:
+            direct = "right"
+        return {"action": "look", "direct": direct}
 
     def _run(
             self,
