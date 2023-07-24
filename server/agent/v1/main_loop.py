@@ -4,9 +4,12 @@ from agents.mrkl.base import ZeroShotAgent, MRKLChain
 # from llm.gpt4all_llm import get_vicuna13b_llm
 from llm.llama import get_llama_llm
 from tools.ddg_search.tool import DuckDuckGoSearchRun
+from tools.vision.tool import VisionTool
+from tools.move.tool import MoveTool
 from tools.human.tool import HumanInputRun
 from tools.askself.tool import AskSelfRun
 from tools.response_to_env.tool import ResponseToEnv
+from sense.vision import get_seeing
 # from memory.buffer import ConversationBufferMemory
 from memory.summary_buffer import ConversationSummaryBufferMemory
 from agents.mrkl.prompt_with_example_v2 import FORMAT_INSTRUCTIONS, PREFIX, SUFFIX
@@ -82,6 +85,8 @@ if __name__ == '__main__':
         # HumanInputRun(),
         AskSelfRun(memory=memory, llm=llm),
         # ResponseToEnv(memory=memory, llm=llm)
+        VisionTool(),
+        MoveTool(),
     ]
     prompt = ZeroShotAgent.create_prompt(
         tools,
@@ -106,9 +111,11 @@ if __name__ == '__main__':
     )
     while True:
         # chat with env, should use interruption mode
-        if np.random.random() > 1:
+        if np.random.random() > 0:
+            time.sleep(1)
             memory.human_prefix = 'Environment'
-            ipt = "a man coming to me. (information from environment)"
+            ipt = "there is some information from environment. "
+            ipt = ipt + "you can see: " + get_seeing()
             while True:
                 try:
                     output = agent_executor.run(input=ipt)
@@ -120,8 +127,8 @@ if __name__ == '__main__':
         # chat with human
         else:
             memory.human_prefix = 'Human'
-            ipt = get_human_input_from_file()
-            # ipt = get_human_input_from_terminal()
+            # ipt = get_human_input_from_file()
+            ipt = get_human_input_from_terminal()
             if ipt == "":
                 continue
             else:

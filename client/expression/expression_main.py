@@ -10,6 +10,8 @@ data_queue = queue.Queue()
 server_url = "http://192.168.1.9:8001/expression/"
 
 while True:
+    time.sleep(0.5)
+    print("try to get mood and talk ...\n")
     json_data = {}
     response = requests.get(server_url)
     data = response.json()["data"]

@@ -3,7 +3,7 @@ import os.path
 import time
 import warnings
 from typing import Any, Optional
-from server.utils.path import ACTION_COMPLETE_FILE, VISION_RESULT_FILE, ACTION_FILE
+from server.utils.path import VISION_ACTION_COMPLETE_FILE, VISION_ACTION_RESULT_FILE, VISION_ACTION_FILE
 from pydantic import Field
 
 from langchain.callbacks.manager import (
@@ -15,19 +15,15 @@ from langchain.utilities.duckduckgo_search import DuckDuckGoSearchAPIWrapper
 
 
 class VisionTool(BaseTool):
-    """Tool that adds the capability to query the DuckDuckGo search API."""
-
     name = "vision"
     description = (
         "Useful for when you need to use vision function to interact with the world."
-        "Input is the direction that you want to look at. It should be one of [around, left, right, ahead]."
+        "Input is the direction that you want to look at. It should be one of (around/left/right/ahead)."
     )
-    api_wrapper: DuckDuckGoSearchAPIWrapper = Field(
-        default_factory=DuckDuckGoSearchAPIWrapper
-    )
-    action_complete_file = ACTION_COMPLETE_FILE
-    vision_result_file = VISION_RESULT_FILE
-    action_file = ACTION_FILE
+
+    action_complete_file = VISION_ACTION_COMPLETE_FILE
+    vision_result_file = VISION_ACTION_RESULT_FILE
+    action_file = VISION_ACTION_FILE
 
     def _get_objs(self):
         res = set()
@@ -62,7 +58,7 @@ class VisionTool(BaseTool):
         else:
             f.write("look_around")
         f.close()
-        ret = "I can see " + self._get_objs()
+        ret = "I can see " + self._get_objs()+". Should I get to some other places?"
         print(ret)
         return ret
 

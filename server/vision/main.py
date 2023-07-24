@@ -5,7 +5,7 @@ from typing import Union
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import JSONResponse
 import logging
-from utils.path import ACTION_FILE, ACTION_COMPLETE_FILE, VISION_RESULT_FILE, MODEL_PATH
+from utils.path import VISION_ACTION_FILE, VISION_ACTION_COMPLETE_FILE, VISION_ACTION_RESULT_FILE, MODEL_PATH
 
 logging.basicConfig(level=logging.DEBUG)
 # from yolov5.yolo import YOLO
@@ -17,9 +17,9 @@ app = FastAPI()
 # model = YOLO.from_pretrained("../../yolov8x.pt")
 model = YOLO(MODEL_PATH+"yolov8m.pt")
 model.to("cpu")
-output_txt_file = VISION_RESULT_FILE
-input_txt_file = ACTION_FILE
-action_complete_file = ACTION_COMPLETE_FILE
+output_txt_file = VISION_ACTION_RESULT_FILE
+input_txt_file = VISION_ACTION_FILE
+action_complete_file = VISION_ACTION_COMPLETE_FILE
 last_modify_time = None
 
 
