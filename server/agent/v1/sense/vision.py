@@ -1,4 +1,4 @@
-from server.utils.path import VISION_DATA
+from server.server_utils.path import VISION_DATA
 
 
 def get_seeing():
