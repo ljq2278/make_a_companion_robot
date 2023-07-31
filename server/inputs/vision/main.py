@@ -48,7 +48,7 @@ async def detect_objects(file: UploadFile = File(...)):
 
     # Perform object detection using the YOLO model
     results = model(image)
-    # show_img(results)
+    show_img(results)
     # logging.debug('len: ',len(results))
     logging.debug("Object detection performed")
 

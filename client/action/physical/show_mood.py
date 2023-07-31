@@ -145,5 +145,7 @@ def show_mood(txt):
     oled.image(image)
     oled.show()
 
-# show_mood('sad')
-# show_mood('happy')
+
+if __name__ == '__main__':
+    show_mood('sad')
+    # show_mood('happy')

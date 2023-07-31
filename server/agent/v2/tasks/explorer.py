@@ -3,7 +3,7 @@ task_list = [
     "Find persons. you can do this by explore action or asking aloud to check if persons nearby.",
     "Take a friendly chat with persons. ",
     "Make persons happy, for example, talk a joker. ",
-    "Explore the space, find different object.  ",
-    "According to what people ask for or yourself interesting, input found objects to <material platform> to make somethings. ",
-    "Level up yourself with increasing found objects, new things made by <material platform> and chatting times with people. "
+    "Explore the space, find different object. ",
+    "According to what people ask for or yourself interesting, input found objects to <material platform> to make some new things. ",
+    "Level up yourself according to the <leveling up handbook>. "
 ]

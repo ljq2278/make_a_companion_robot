@@ -25,6 +25,23 @@ L_Motor.start(0)
 R_Motor = GPIO.PWM(PWMB, 100)
 R_Motor.start(0)
 
+
+def motor_to_mv_speed(motor_speed):
+    return 17.225 / 50 * motor_speed
+
+
+def motor_to_rot_speed(motor_speed):
+    return 90 / 62 * motor_speed
+
+
+def mv_speed_to_motor(mv_speed):
+    return 50 / 17.225 * mv_speed
+
+
+def rot_speed_to_motor(rot_speed):
+    return 62 / 90 * rot_speed
+
+
 def _stop():
     L_Motor.ChangeDutyCycle(0)
     GPIO.output(AIN2, False)  # AIN2
@@ -34,55 +51,62 @@ def _stop():
     GPIO.output(BIN1, False)  # BIN1
 
 
-def m_up(speed, t_time):
-    L_Motor.ChangeDutyCycle(speed)
+def m_up(mv_tm, mv_speed=10):
+    motor_speed = mv_speed_to_motor(mv_speed)
+    L_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(AIN2, False)  # AIN2
     GPIO.output(AIN1, True)  # AIN1
-    R_Motor.ChangeDutyCycle(speed)
+    R_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(BIN2, False)  # BIN2
     GPIO.output(BIN1, True)  # BIN1
-    time.sleep(t_time)
+    time.sleep(mv_tm)
     _stop()
 
 
-def m_down(speed, t_time):
-    L_Motor.ChangeDutyCycle(speed)
+def m_down(mv_tm, mv_speed=10):
+    motor_speed = mv_speed_to_motor(mv_speed)
+    L_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(AIN2, True)  # AIN2
     GPIO.output(AIN1, False)  # AIN1
-    R_Motor.ChangeDutyCycle(speed)
+    R_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(BIN2, True)  # BIN2
     GPIO.output(BIN1, False)  # BIN1
-    time.sleep(t_time)
+    time.sleep(mv_tm)
     _stop()
 
-def r_left(speed, t_angle):
-    L_Motor.ChangeDutyCycle(speed)
+
+def r_left(rot_tm, rot_speed=90):
+    motor_speed = rot_speed_to_motor(rot_speed)
+    L_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(AIN2, True)  # AIN2
     GPIO.output(AIN1, False)  # AIN1
-    R_Motor.ChangeDutyCycle(speed)
+    R_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(BIN2, False)  # BIN2
     GPIO.output(BIN1, True)  # BIN1
-    time.sleep(t_angle/90)
+    time.sleep(rot_tm)
     _stop()
 
 
-def r_right(speed, t_angle):
-    L_Motor.ChangeDutyCycle(speed)
+def r_right(rot_tm, rot_speed=90):
+    motor_speed = rot_speed_to_motor(rot_speed)
+    L_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(AIN2, False)  # AIN2
     GPIO.output(AIN1, True)  # AIN1
-    R_Motor.ChangeDutyCycle(speed)
+    R_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(BIN2, True)  # BIN2
     GPIO.output(BIN1, False)  # BIN1
-    time.sleep(t_angle/90)
+    time.sleep(rot_tm)
     _stop()
+
 
 if __name__ == '__main__':
     try:
-        while True:
-            t_up(50, 3)
-            t_down(50, 3)
-            t_left(50, 3)
-            t_right(50, 3)
-            t_stop(3)
+        # while True:
+        m_up(1, 20)
+        # t_down(50, 3)
+        # r_left(0.5)
+        # t_right(50, 3)
+        # _stop()
+        # time.sleep(2)
     except KeyboardInterrupt:
         GPIO.cleanup()

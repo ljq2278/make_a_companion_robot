@@ -1,17 +1,13 @@
 from pydantic import BaseModel
 
 
-class Power:
-    def __init__(self, cur_power, on_charge):
-        self.cur_power = cur_power
-        self.on_charge = on_charge
+class Kernel:
+    def __init__(self, voltage):
+        self.voltage = voltage
 
 
-class Vision:
-    def __init__(self, objs, locations):
-        self.objs = objs
-        self.locations = locations
-
+class KernelInput(BaseModel):
+    voltage: str
 
 class Obstacle:
     def __init__(self, dist):

@@ -1,11 +1,12 @@
 import RPi.GPIO as GPIO
 import time
 
-utr_TRIG = 11  # 超声波模块Tring控制管脚
-utr_ECHO = 12  # 超声波模块Echo控制管脚
+# utr_TRIG = 11  # 超声波模块Tring控制管脚
+# utr_ECHO = 35  # 超声波模块Echo控制管脚
+utr_TRIG = 17  # 超声波模块Tring控制管脚
+utr_ECHO = 19  # 超声波模块Echo控制管脚
 
-GPIO.setmode(GPIO.BOARD)      # 采用实际的物理管脚给GPIO口
-GPIO.setwarnings(False)       # 忽略GPIO操作注意警告
+GPIO.setmode(GPIO.BCM)
 GPIO.setup(utr_TRIG, GPIO.OUT) # Tring设置为输出模式
 GPIO.setup(utr_ECHO, GPIO.IN)  # Echo设置为输入模式
 

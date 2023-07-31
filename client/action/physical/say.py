@@ -64,4 +64,6 @@ def read_alound_and_show_text(txt):
         # Run the engine
         engine.runAndWait()
 
-# read_alound_and_show_text("Here are some ttf font Examples. Here are some ttf font Examples. Here are some ttf font Examples. Here are some ttf font Examples. ")
+if __name__ == '__main__':
+    read_alound_and_show_text("hello")
+    # read_alound_and_show_text("Here are some ttf font Examples. Here are some ttf font Examples. Here are some ttf font Examples. Here are some ttf font Examples. ")

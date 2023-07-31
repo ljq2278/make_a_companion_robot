@@ -6,7 +6,7 @@ from llm.llama import get_llama_llm
 from tools.ddg_search.tool import DuckDuckGoSearchRun
 from server_utils.others import parse_txt_and_mood, wait_for_human_response
 from tools.actions.find_person_and_chat.tool import InviteToChatRun
-from tools.askself.tool import AskSelfRun
+from tools.query_self.tool import AskSelfRun
 from server_utils.path import CLIENT_ACTION_IP_PATH
 from states.state import get_states
 # from memory.buffer import ConversationBufferMemory

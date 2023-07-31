@@ -16,8 +16,8 @@ vertical_up_angle = vertical_stand_angle - 60
 vertical_down_angle = vertical_stand_angle + 60
 
 horiz_stand_angle = 95
-horiz_right_angle = horiz_stand_angle - 60
-horiz_left_angle = horiz_stand_angle + 60
+horiz_right_angle = horiz_stand_angle - 80
+horiz_left_angle = horiz_stand_angle + 80
 
 
 def turn_angle_horiz(src, dest):
@@ -39,8 +39,8 @@ def l_up():
     time.sleep(0.5)
     kit.servo[3].angle = horiz_stand_angle
     time.sleep(0.5)
-    kit.servo[1].angle = None
-    kit.servo[3].angle = None
+    # kit.servo[1].angle = None
+    # kit.servo[3].angle = None
     wait_for_static()
 
 
@@ -56,8 +56,8 @@ def l_left():
     time.sleep(0.5)
     kit.servo[3].angle = horiz_left_angle
     time.sleep(0.5)
-    kit.servo[1].angle = None
-    kit.servo[3].angle = None
+    # kit.servo[1].angle = None
+    # kit.servo[3].angle = None
     wait_for_static()
 
 
@@ -70,8 +70,8 @@ def l_left_up():
     time.sleep(0.5)
     kit.servo[3].angle = horiz_left_angle
     time.sleep(0.5)
-    kit.servo[1].angle = None
-    kit.servo[3].angle = None
+    # kit.servo[1].angle = None
+    # kit.servo[3].angle = None
     wait_for_static()
 
 
@@ -82,9 +82,10 @@ def l_right():
     time.sleep(0.5)
     kit.servo[3].angle = horiz_right_angle
     time.sleep(0.5)
-    kit.servo[1].angle = None
-    kit.servo[3].angle = None
+    # kit.servo[1].angle = None
+    # kit.servo[3].angle = None
     wait_for_static()
+
 
 def l_right_up():
     # kit.servo[3].angle = horiz_stand_angle
@@ -95,8 +96,8 @@ def l_right_up():
     time.sleep(0.5)
     kit.servo[3].angle = horiz_right_angle
     time.sleep(0.5)
-    kit.servo[1].angle = None
-    kit.servo[3].angle = None
+    # kit.servo[1].angle = None
+    # kit.servo[3].angle = None
     wait_for_static()
 
 
@@ -105,9 +106,16 @@ def l_init():
     time.sleep(0.5)
     kit.servo[3].angle = horiz_stand_angle
     time.sleep(0.5)
+    # kit.servo[1].angle = None
+    # kit.servo[3].angle = None
+    wait_for_static()
+
+def unset_motor():
     kit.servo[1].angle = None
     kit.servo[3].angle = None
-    wait_for_static()
+
+def get_direct():
+    return {"hori_rot": kit.servo[3].angle, "vert_rot": kit.servo[1].angle}
 
 
 look_funcs = {

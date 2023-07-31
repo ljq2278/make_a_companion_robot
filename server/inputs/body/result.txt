@@ -1,0 +1,1 @@
+{"hori_rot": 94, "vert_rot": 99}

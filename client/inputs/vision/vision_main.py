@@ -6,7 +6,7 @@ import numpy as np
 # Set the server URL (adjust the IP address and port if needed)
 SERVER_URL = "http://192.168.1.9:8006/vision/"
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 time_per_frame = 2 / 1
 
 

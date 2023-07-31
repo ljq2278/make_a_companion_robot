@@ -1,7 +1,7 @@
 """Tool for asking human input."""
 
 from typing import Callable, Optional
-from langchain.llms.base import LLM
+
 from pydantic import Field
 
 from langchain.callbacks.manager import (
@@ -9,36 +9,40 @@ from langchain.callbacks.manager import (
     CallbackManagerForToolRun,
 )
 from langchain.tools.base import BaseTool
-from memory.buffer import ConversationBufferMemory
-# from langchain.schema.messages import get_buffer_string
+from .logical import do_find_person, do_query
+# from langchain.llms.base import LLM
+import numpy as np
 
-# def _print_func(text: str) -> None:
-#     print("\n")
-#     print(text)
-#
 
-class AskSelfRun(BaseTool):
+def _print_func(text: str) -> None:
+    print("\n")
+    print(text)
+
+
+class ExploreWorldRun(BaseTool):
     """Tool that adds the capability to ask user for input."""
 
-    name = "askSelf"
+    name = "exploreWorld"
     description = (
-        "Useful for when you want to know something about yourself, "
-        "input should be what you want to know about yourself."
+        "Useful for when you want to explore the world. "
+        "The input is how much time you want to explore."
     )
+    # llm: LLM = None
+    input_func: Callable = Field(default_factory=lambda: input)
 
-    # prompt_func: Callable[[str], None] = Field(default_factory=lambda: _print_func)
-    llm: LLM = None
-    memory:  ConversationBufferMemory = None
     def _run(
             self,
             query: str,
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ) -> str:
         """Use the Human input tool."""
-        # self.prompt_func(query)
-        history = self.memory.buffer
-        return self.llm.predict(history+"\n\n"+query)
-        # return self.preset
+        res = do_find_person()
+        if res:
+            final_res = do_query(query)
+        else:
+            final_res = "find human failed. no response. "
+        print("Observation: " + final_res)
+        return final_res
 
     async def _arun(
             self,

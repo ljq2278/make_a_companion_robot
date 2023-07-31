@@ -10,7 +10,7 @@ app = FastAPI()
 
 
 @app.post("/ultrasound/")
-async def receive_ultrasound(data: ObstacleInput):
+async def receive(data: ObstacleInput):
     obstacle = Obstacle(dist=data.dist)
     f = open(ULTRASOUND_DATA, 'w', encoding='utf-8')
     f.write(obstacle.dist + "\n")
