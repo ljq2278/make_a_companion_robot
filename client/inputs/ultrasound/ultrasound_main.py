@@ -2,14 +2,14 @@ import cv2
 import requests
 import time
 import numpy as np
-from action.physical.ultrasound_measure import ur_disMeasure
+from action.physical.ultrasound_measure import get_dist
 from client_utils.path import ULTRASOUND_SERVER_IP_PATH
 from formats.states_format import Obstacle
 import json
 
 
 def send_data():
-    dist = ur_disMeasure()
+    dist = get_dist()
     obstacle = Obstacle(dist=str(int(dist)) + "cm")
     obstacle_dict = vars(obstacle)
     print('send data ... ', obstacle_dict)

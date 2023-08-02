@@ -9,7 +9,7 @@ kit = ServoKit(channels=16)
 
 time_per_frame = 2 / 1
 
-turn_angle_speed = 5
+turn_angle_speed = 2
 
 vertical_stand_angle = 100
 vertical_up_angle = vertical_stand_angle - 60
@@ -30,6 +30,13 @@ def turn_angle_vert(src, dest):
     for angle in np.arange(src, dest, turn_angle_speed if dest > src else -turn_angle_speed):
         kit.servo[1].angle = angle
         time.sleep(0.1)
+
+
+def turn_neck(rad_bias):
+    angle = -np.rad2deg(rad_bias) + horiz_stand_angle
+    kit.servo[3].angle = angle
+    wait_for_static(1)
+    kit.servo[3].angle = None
 
 
 def l_up():
@@ -110,9 +117,11 @@ def l_init():
     # kit.servo[3].angle = None
     wait_for_static()
 
+
 def unset_motor():
     kit.servo[1].angle = None
     kit.servo[3].angle = None
+
 
 def get_direct():
     return {"hori_rot": kit.servo[3].angle, "vert_rot": kit.servo[1].angle}
@@ -128,5 +137,5 @@ look_funcs = {
 }
 
 if __name__ == '__main__':
-    l_right()
-    l_init()
+    turn_neck(1)
+    # l_init()

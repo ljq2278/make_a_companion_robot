@@ -1,9 +1,10 @@
 import io
+import time
 
 from PIL import Image
 from fastapi import FastAPI, File, UploadFile, Form
 import logging
-from fastapi.responses import Response, PlainTextResponse
+from fastapi.responses import Response, PlainTextResponse, JSONResponse
 import subprocess
 import torch
 
@@ -20,7 +21,7 @@ output_txt_file = VISION_DATA
 img_procs = []
 
 
-def show_img(results):
+def show_imgs(results):
     results.render()
     im = results.ims[0]
     tmp = Image.fromarray(im)
@@ -34,8 +35,20 @@ def show_img(results):
     img_procs.append(p)
 
 
+def show_cur_img(results):
+    results.render()
+    im = results.ims[0]
+    tmp = Image.fromarray(im)
+    tmp.save("tmp.png", format="JPEG")
+    # tmp = Image.fromarray(res_plotted, mode="RGB")
+    # tmp.save("tmp.png")
+    p = subprocess.Popen("python inputs/vision/test/image_viewer.py tmp.png")
+    time.sleep(1)
+    p.kill()
+
+
 @app.post("/vision/")
-async def detect_objects(file: UploadFile = File(...)):
+async def detect_objects(file: UploadFile = File(...), text: str = Form(...)):
     global img_procs
 
     logging.debug("Image received")
@@ -48,7 +61,10 @@ async def detect_objects(file: UploadFile = File(...)):
 
     # Perform object detection using the YOLO model
     results = model(image)
-    show_img(results)
+    if text == "consecutive":
+        show_imgs(results)
+    elif text == "single":
+        show_cur_img(results)
     # logging.debug('len: ',len(results))
     logging.debug("Object detection performed")
 
@@ -61,4 +77,5 @@ async def detect_objects(file: UploadFile = File(...)):
             objects.append({"name": xyxyn.loc[i, "name"], "bbox": [xyxyn.loc[i, "xmin"], xyxyn.loc[i, "ymin"], xyxyn.loc[i, "xmax"], xyxyn.loc[i, "ymax"]]})
             f.write(xyxyn.loc[i, "name"] + "\n")
     f.close()
-    return Response(status_code=200)
+    # return Response(status_code=200)
+    return JSONResponse(status_code=200, content=objects)

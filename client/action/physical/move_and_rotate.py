@@ -51,7 +51,7 @@ def _stop():
     GPIO.output(BIN1, False)  # BIN1
 
 
-def m_up(mv_tm, mv_speed=10):
+def m_up(mv_tm, mv_speed=20):
     motor_speed = mv_speed_to_motor(mv_speed)
     L_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(AIN2, False)  # AIN2
@@ -63,7 +63,7 @@ def m_up(mv_tm, mv_speed=10):
     _stop()
 
 
-def m_down(mv_tm, mv_speed=10):
+def m_down(mv_tm, mv_speed=20):
     motor_speed = mv_speed_to_motor(mv_speed)
     L_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(AIN2, True)  # AIN2
@@ -101,10 +101,9 @@ def r_right(rot_tm, rot_speed=90):
 
 if __name__ == '__main__':
     try:
-        # while True:
-        m_up(1, 20)
-        # t_down(50, 3)
-        # r_left(0.5)
+        # m_up(10, 20)
+        # m_down(5, 20)
+        r_left(0.5)
         # t_right(50, 3)
         # _stop()
         # time.sleep(2)
