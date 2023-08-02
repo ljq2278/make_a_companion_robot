@@ -39,7 +39,7 @@ def mv_speed_to_motor(mv_speed):
 
 
 def rot_speed_to_motor(rot_speed):
-    return 62 / 90 * rot_speed
+    return 50 / 90 * rot_speed
 
 
 def _stop():

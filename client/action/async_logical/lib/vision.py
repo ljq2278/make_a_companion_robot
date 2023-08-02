@@ -28,7 +28,7 @@ def get_objs():
     _, image_encoded = cv2.imencode(".jpg", frame)
     image_bytes = image_encoded.tobytes()
     files = {"file": ("image.jpg", image_bytes, "image/jpeg")}
-    print('get objs ...')
+    print('get objs from server ...')
     response = requests.post(VISION_SERVER_IP_PATH, files=files, data={'text': show_img_type})
     if response.status_code == 200:
         print('get objs success ')
@@ -94,7 +94,6 @@ def calc_features(resp_objs, self_stat):
 
 
 def analysis_vision(self_stat):
-    global cap
     resp_objs = get_objs()
     return calc_features(resp_objs, self_stat)
 
