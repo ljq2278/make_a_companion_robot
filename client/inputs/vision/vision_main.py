@@ -6,7 +6,7 @@ from client_utils.path import VISION_SERVER_IP_PATH
 
 cap_id = 1
 cap1 = cv2.VideoCapture(cap_id)
-show_img_type = "consecutive" # consecutive, single
+show_img_type = "none" # consecutive, single
 
 def set_camera(cap):
     cap.set(cv2.CAP_PROP_BRIGHTNESS, 75 if cap_id==0 else 20)  # 亮度 130

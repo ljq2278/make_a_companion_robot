@@ -82,17 +82,6 @@ def get_to_new_place_with_base(self_stat):
     return self_stat
 
 
-# def get_to_new_place_with_base2():
-#     global obj_pos
-#     random_explore()
-#     succ, angle, dist1, dist2, cls1, cls2, sz1, sz2 = see_base2()
-#     while not succ:
-#         random_explore()
-#         succ, angle, dist1, dist2, cls1, cls2, sz1, sz2 = see_base2()
-#     self_pos = position.get_pos0_by_2dist_1angle_2pos(dist1, dist2, angle, obj_pos[cls1], obj_pos[cls2])
-#     print("I am at ", self_pos)
-#     return self_pos
-
 def record(features):
     print("record: ", features)
     return

@@ -8,10 +8,11 @@ PRJ_PATH = "D:/PycharmProjects/make_a_companion_robot/server/"
 # MOVE_ACTION_RESULT_FILE = PRJ_PATH+"move/object.txt"
 
 KEYBOARD_DATA = PRJ_PATH+'inputs/keyboard/result.txt'
-ULTRASOUND_DATA = PRJ_PATH+'inputs/ultrasound/result.txt'
+OTHERS_DATA = PRJ_PATH+'inputs/others/result.txt'
+# ULTRASOUND_DATA = PRJ_PATH+'inputs/ultrasound/result.txt'
 BODY_DATA = PRJ_PATH+'inputs/body/result.txt'
 VISION_DATA = PRJ_PATH+'inputs/vision/result.txt'
-KERNEL_DATA = PRJ_PATH+'inputs/kernel/result.txt'
+# KERNEL_DATA = PRJ_PATH+'inputs/kernel/result.txt'
 
 ACTION_FILE = PRJ_PATH+'action/action.txt'
 ACTION_RESULT_FILE = PRJ_PATH+"action/result.txt"

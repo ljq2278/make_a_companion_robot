@@ -1,18 +1,16 @@
-import time
-from PIL import Image
-import os
-from typing import Union
+
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import JSONResponse, Response
 import logging
 from action.physical.look import look_funcs, l_init, unset_motor
 from action.physical.say import read_alound_and_show_text
 from action.physical.show_mood import show_mood
-from action.physical.show_mood import show_mood
-
+from action.async_logical.explore import one_time_explore
+import subprocess
 logging.basicConfig(level=logging.DEBUG)
 app = FastAPI()
 
+async_explore_pid = None
 
 @app.on_event("startup")
 def startup_event():
@@ -30,6 +28,7 @@ def shutdown_event():
 
 @app.post("/action/")
 async def do_action(action: str = Form(...)):
+    global async_explore_pid
     try:
         print(action)
         action_full = action.split("#")
@@ -44,7 +43,7 @@ async def do_action(action: str = Form(...)):
         elif act == "say":
             read_alound_and_show_text(act_param)
         elif act == "explore":
-            explore(act_param)
+            async_explore_pid = subprocess.Popen("python3 action/async_logical/explore.py")
         else:
             return Response(status_code=200, content="false")
         return Response(status_code=200, content="true")

@@ -1,0 +1,1 @@
+{"us_dist": "60cm", "voltage": 12.8, "person_near": false}

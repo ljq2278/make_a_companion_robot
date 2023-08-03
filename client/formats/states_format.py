@@ -1,21 +1,17 @@
 from pydantic import BaseModel
 
 
-class Kernel:
-    def __init__(self, voltage):
+class Others:
+    def __init__(self, us_dist, voltage, person_near):
+        self.us_dist = us_dist
         self.voltage = voltage
+        self.person_near = person_near
 
 
-class KernelInput(BaseModel):
-    voltage: str
-
-class Obstacle:
-    def __init__(self, dist):
-        self.dist = dist
-
-
-class ObstacleInput(BaseModel):
-    dist: str
+class OthersInput(BaseModel):
+    us_dist: str
+    voltage: float
+    person_near: bool
 
 
 class Body:

@@ -9,8 +9,10 @@ from action.physical.look import l_init, turn_neck
 from action.physical.ultrasound_measure import get_dist
 from action.async_logical.lib import position
 
+
+cap_id = 0
 show_img_type = "consecutive"
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(cap_id)
 
 
 def get_rad_dist(rad_bias):
@@ -22,7 +24,7 @@ def get_objs():
     global cap
     wait_for_static(1)
     cap.release()
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(cap_id)
     set_camera(cap)
     ret, frame = cap.read()
     _, image_encoded = cv2.imencode(".jpg", frame)
