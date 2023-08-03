@@ -1,1 +1,1 @@
-{"hori_rot": 94, "vert_rot": 99}
+{"hori_rot": 69, "vert_rot": 99}
