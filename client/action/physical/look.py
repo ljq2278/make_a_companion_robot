@@ -36,7 +36,6 @@ def turn_neck(rad_bias):
     angle = -np.rad2deg(rad_bias) + horiz_stand_angle
     kit.servo[3].angle = angle
     wait_for_static(1)
-    kit.servo[3].angle = None
 
 
 def l_up():

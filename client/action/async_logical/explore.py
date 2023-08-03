@@ -4,12 +4,8 @@
 from action.physical.move_and_rotate import r_right, m_up
 from action.async_logical.lib import vision
 
-import requests
 import numpy as np
-from sympy import Point, Circle
-import cv2
-import json
-import math
+
 
 base_objs = ["Tripod", "Fan", "Monitor/TV"]
 base_poses = {"Tripod": [-100, 300], "Fan": [0, 0], "Monitor/TV": [-200, 0]}
