@@ -2,17 +2,19 @@ import cv2
 import requests
 import json
 import numpy as np
-from client_utils.path import VISION_SERVER_IP_PATH
+from client_utils.path import VISION_SERVER_IP_PATH, CAMERA_IMG_PATH
 from client_utils.others import wait_for_static, set_camera
 # from action.async_logical.lib.combine_action import get_rad_dist
 from action.physical.look import l_init, turn_neck
 from action.physical.ultrasound_measure import get_dist
 from action.async_logical.lib import position
+from PIL import Image
 
-
-cap_id = 0
+# cap_id = 1
 show_img_type = "consecutive"
-cap = cv2.VideoCapture(cap_id)
+
+
+# cap = cv2.VideoCapture(cap_id)
 
 
 def get_rad_dist(rad_bias):
@@ -21,13 +23,21 @@ def get_rad_dist(rad_bias):
 
 
 def get_objs():
-    global cap
-    wait_for_static(1)
-    cap.release()
-    cap = cv2.VideoCapture(cap_id)
-    set_camera(cap)
-    ret, frame = cap.read()
-    _, image_encoded = cv2.imencode(".jpg", frame)
+    # global cap
+    wait_for_static(2)
+    # cap.release()
+    # cap = cv2.VideoCapture(cap_id)
+    # set_camera(cap)
+    # ret, frame = cap.read()
+    # _, image_encoded = cv2.imencode(".jpg", frame)
+    succ = False
+    while not succ:
+        try:
+            image = Image.open(CAMERA_IMG_PATH)
+            succ = True
+        except Exception as e:
+            print(e)
+    _, image_encoded = cv2.imencode(".jpg", np.array(image))
     image_bytes = image_encoded.tobytes()
     files = {"file": ("image.jpg", image_bytes, "image/jpeg")}
     print('get objs from server ...')
@@ -101,5 +111,5 @@ def analysis_vision(self_stat):
 
 
 if __name__ == '__main__':
-    print(analysis_vision({"rad": 0}))
+    print(analysis_vision({"pos": [-150, 150], "rad": -3.14 / 2}))
     # print(get_rad_dist(-0.4))

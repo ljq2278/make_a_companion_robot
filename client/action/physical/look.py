@@ -34,6 +34,7 @@ def turn_angle_vert(src, dest):
 
 def turn_neck(rad_bias):
     angle = -np.rad2deg(rad_bias) + horiz_stand_angle
+    # turn_angle_horiz(kit.servo[3].angle, angle)
     kit.servo[3].angle = angle
     wait_for_static(1)
 
@@ -136,5 +137,5 @@ look_funcs = {
 }
 
 if __name__ == '__main__':
-    turn_neck(1)
+    turn_neck(0)
     # l_init()
