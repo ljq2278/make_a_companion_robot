@@ -3,7 +3,7 @@ import requests
 import os
 from PIL import Image
 import numpy as np
-from client_utils.path import VISION_SERVER_IP_PATH, CAMERA_IMG_PATH, PHYSICS_PARAM_DIRECT
+from client_utils.path import VISION_SERVER_IP_PATH, CAMERA_IMG_PATH, PHYSICS_PARAM_BLACK_CAMERA
 
 cap_id = 1
 cap1 = cv2.VideoCapture(cap_id)
@@ -29,7 +29,7 @@ def set_camera(cap):
     # cap.set(cv2.CAP_PROP_CONTRAST, 40)
     # cap.set(cv2.CAP_PROP_SATURATION, 50)
     # cap.set(cv2.CAP_PROP_HUE, 50)
-    if os.path.exists(PHYSICS_PARAM_DIRECT + "black.txt"):
+    if os.path.exists(PHYSICS_PARAM_BLACK_CAMERA):
         cap.set(cv2.CAP_PROP_EXPOSURE, 0)  # 黑夜模式，只能看到强光源
     return
 

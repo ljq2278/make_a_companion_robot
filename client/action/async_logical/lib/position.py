@@ -1,12 +1,62 @@
 import math
 from sympy import Point, Circle
 import numpy as np
+from action.physical.compass import get_body_direct
+from action.physical.move_and_rotate import r_right, m_up
+from action.async_logical.lib import vision
+
+m_speed = 20
+r_speed = 90
+rot_unit = 60
+mv_unit = 20
+base_objs = ["Tripod", "Fan", "Monitor/TV"]
+base_poses = {"Tripod": [250, 20], "Fan": [0, 0], "Monitor/TV": [40, 200]}
+
+
+def rela_pos_to_rad(x, y):
+    if x == 0:
+        x = 0.0001
+    deg = np.rad2deg(np.arctan(y / x))
+    if y > 0 and x < 0:
+        deg = deg + 180
+    elif y < 0 and x < 0:
+        deg = deg - 180
+    # print(x, y, z)
+    print(x, y, deg)
+    return np.deg2rad(deg)
 
 
 def get_obj_pos(obj_to_self_rad, obj_dist):
     x = obj_dist * np.cos(obj_to_self_rad)
     y = obj_dist * np.sin(obj_to_self_rad)
     return [x, y]
+
+
+def rot_to_get_base(self_stat):
+    rotted = 0
+    base_feat = None
+    while rotted < 360:
+        r_right(rot_unit / r_speed, r_speed)
+        print("rot angle searching base: ", rot_unit)
+        rotted += rot_unit
+        # self_stat["rad"] += np.pi / 3
+        self_stat["rad"] = get_body_direct(use_rad=True)
+        features = vision.analysis_vision(self_stat)
+        for feat in features:
+            if feat["cls"] in base_objs:
+                base_feat = feat
+                break
+        if base_feat is not None:
+            break
+    print("rot_to_get_base, base_feat: ", base_feat)
+    return base_feat
+
+
+def adjust_self_feat(self_stat, base_feat):
+    real_pos_base = base_poses[base_feat["cls"]]
+    real_pos_self = real_pos_base[0] - base_feat["o2s_pos"][0], real_pos_base[1] - base_feat["o2s_pos"][1]
+    self_stat["pos"] = real_pos_self
+    return self_stat
 
 
 # def get_self_pos_with_base(rad_to_obj, base_stat, dist):

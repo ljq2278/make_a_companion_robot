@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+from action.physical.compass import get_body_direct
 
 PWMA = 18
 AIN1 = 22
@@ -99,13 +100,25 @@ def r_right(rot_tm, rot_speed=90):
     _stop()
 
 
+def rotate_to_dest_rad(dest_rad):
+    cur_rad = get_body_direct(use_rad=True)
+    while abs(cur_rad - dest_rad) > 0.1:
+        print("cur_rad: ", cur_rad)
+        if dest_rad - cur_rad > 0:
+            r_right(0.1)
+        else:
+            r_left(0.1)
+        cur_rad = get_body_direct(use_rad=True)
+
+
 if __name__ == '__main__':
     try:
         # m_up(0.5, 10)
-        m_down(5, 20)
+        # m_down(5, 20)
         # r_left(0.5)
         # t_right(50, 3)
         # _stop()
         # time.sleep(2)
+        rotate_to_dest_rad(-2.925)
     except KeyboardInterrupt:
         GPIO.cleanup()

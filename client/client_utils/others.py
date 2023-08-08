@@ -1,5 +1,5 @@
 import time
-from client_utils.path import ASYNC_TASK_FLG
+from client_utils.path import ASYNC_TASK_FLG, PHYSICS_PARAM_BLACK_CAMERA
 import json
 import os
 
@@ -15,6 +15,18 @@ def get_task_state():
             return res
         except Exception as e:
             print(e)
+
+
+def set_camera_black_mode():
+    f = open(PHYSICS_PARAM_BLACK_CAMERA, 'w', encoding='utf-8')
+    f.close()
+
+
+def set_camera_color_mode():
+    try:
+        os.remove(PHYSICS_PARAM_BLACK_CAMERA)
+    except Exception as e:
+        print(e)
 
 
 def set_task_state(nm, state, result):

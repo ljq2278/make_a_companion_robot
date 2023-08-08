@@ -50,7 +50,7 @@ async def do_action(action: str = Form(...)):
         elif act in async_task_set:
             async_pid.kill()
             set_task_state(act, "on doing", "")
-            async_pid = subprocess.Popen("python3 action/async_logical/%s.py" % act)
+            async_pid = subprocess.Popen("python3 action/async_logical/%s.py %s" % (act, act_param))
         else:
             return Response(status_code=200, content="false")
         return Response(status_code=200, content="true")

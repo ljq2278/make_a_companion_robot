@@ -24,13 +24,16 @@ def ur_disMeasure():
     time.sleep(0.00001)  # 发出超声波脉冲
     GPIO.output(utr_TRIG, 0)  # 设置为低电平
 
-    while GPIO.input(utr_ECHO) == 0:  # 等待回传信号
-        us_a = 0
+    cont_start = 0
+    while GPIO.input(utr_ECHO) == 0 and cont_start < 100000:  # 等待回传信号
+        cont_start += 1
     us_time1 = time.time()  # 获取当前时间
-    while GPIO.input(utr_ECHO) == 1:  # 回传信号截止信息
-        us_a = 1
+    cont_end = 0
+    while GPIO.input(utr_ECHO) == 1 and cont_end < 100000:  # 回传信号截止信息
+        cont_end += 1
     us_time2 = time.time()  # 获取当前时间
-
+    if cont_end == 100000 or cont_start == 100000:
+        print("ultrasound error!")
     us_during = us_time2 - us_time1  # 转换微秒级的时间
 
     # 声速在空气中的传播速度为340m/s, 超声波要经历一个发送信号和一个回波信息，

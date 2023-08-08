@@ -14,4 +14,4 @@ ASYNC_TASK_FLG = PRJ_PATH + "action/async_logical/last_task_state.txt"
 # ON_CHARGE_FLG_PATH = PRJ_PATH + "action/async_logical/flg/on_charge.txt"
 # ON_CHARGE_WAY_FLG_PATH = PRJ_PATH + "action/async_logical/flg/on_charge_way.txt"
 
-PHYSICS_PARAM_DIRECT = PRJ_PATH + "physical/param/"
+PHYSICS_PARAM_BLACK_CAMERA = PRJ_PATH + "action/physical/param/black.txt"

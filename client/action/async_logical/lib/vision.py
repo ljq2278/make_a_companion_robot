@@ -21,7 +21,7 @@ y_start = 0
 y_end = img_height // 5 * 4
 x_start = img_width // 5
 x_end = img_width // 5 * 4
-
+bright_thresh = 100
 
 # cap = cv2.VideoCapture(cap_id)
 def get_img():
@@ -51,45 +51,20 @@ def get_charge_plugin(image):
             pooled_ind_y = y // scan_cube_size
             pooled_ind_x = x // scan_cube_size
             pooled_img[pooled_ind_y, pooled_ind_x] = np.mean(data_yx[y:y + scan_cube_size, x:x + scan_cube_size, use_color_channel])
-            if pooled_img[pooled_ind_y, pooled_ind_x] >= 100:
+            if pooled_img[pooled_ind_y, pooled_ind_x] >= bright_thresh:
                 if y > y_start and x > x_start and np.abs(pooled_img[pooled_ind_y, pooled_ind_x] - pooled_img[pooled_ind_y - 1, pooled_ind_x - 1]) > 50:
                     edge_right = pooled_ind_x + 1
                     pooled_img[pooled_ind_y, edge_right] = np.mean(data_yx[y:y + scan_cube_size, edge_right * scan_cube_size:edge_right * scan_cube_size + scan_cube_size, use_color_channel])
-                    while pooled_img[pooled_ind_y, edge_right] > pooled_img[pooled_ind_y, pooled_ind_x] - 50:
+                    while pooled_img[pooled_ind_y, edge_right] > pooled_img[pooled_ind_y, pooled_ind_x] - 50 and edge_right < pooled_img.shape[1] - 1:
                         edge_right += 1
                         pooled_img[pooled_ind_y, edge_right] = np.mean(data_yx[y:y + scan_cube_size, edge_right * scan_cube_size:edge_right * scan_cube_size + scan_cube_size, use_color_channel])
                     sz = (edge_right - pooled_ind_x) * scan_cube_size
+                    if sz > 40:
+                        continue
                     bias = (x + sz + x) / 2 - img_width / 2
                     return x, y, sz, bias
     return None, None, None, None
 
-
-# def get_charge_plugin(image):
-#     data_yx = np.array(image).astype(int)
-#     # data_yx_diff = np.abs(data_yx[0:-1, 0:-1, :] - data_yx[1:, 1:, :])
-#     pooled_img = np.zeros([img_height // 5, img_width // 5])
-#     # y_start = img_height // 3
-#     y_start = 0
-#     y_end = img_height // 3 * 2
-#     x_start = img_width // 4
-#     x_end = img_width // 4 * 3
-#     for y in range(y_start, y_end, scan_cube_size):
-#         for x in range(x_start, x_end, scan_cube_size):
-#             pooled_ind_y = y // scan_cube_size
-#             pooled_ind_x = x // scan_cube_size
-#             pooled_img[pooled_ind_y, pooled_ind_x] = np.mean(data_yx[y:y + scan_cube_size, x:x + scan_cube_size, use_color_channel])
-#             if pooled_img[pooled_ind_y, pooled_ind_x] >= 250 and \
-#                     (y > y_start and x > x_start and np.abs(
-#                         pooled_img[pooled_ind_y, pooled_ind_x] - pooled_img[pooled_ind_y - 1, pooled_ind_x - 1]) > 90):
-#                 edge_right = pooled_ind_x + 1
-#                 pooled_img[pooled_ind_y, edge_right] = np.mean(data_yx[y:y + scan_cube_size, edge_right * scan_cube_size:edge_right * scan_cube_size + scan_cube_size, use_color_channel])
-#                 while np.abs(pooled_img[pooled_ind_y, edge_right] - pooled_img[pooled_ind_y, edge_right - 1]) < 50:
-#                     edge_right += 1
-#                     pooled_img[pooled_ind_y, edge_right] = np.mean(data_yx[y:y + scan_cube_size, edge_right * scan_cube_size:edge_right * scan_cube_size + scan_cube_size, use_color_channel])
-#                 sz = (edge_right - pooled_ind_x) * scan_cube_size
-#                 bias = (x + sz + x) / 2 - img_width / 2
-#                 return x, y, sz, bias
-#     return None, None, None, None
 
 
 def get_charge_point():
@@ -100,7 +75,7 @@ def get_charge_point():
 
 def get_objs():
     # global cap
-    wait_for_static(2)
+    wait_for_static(4)
     # cap.release()
     # cap = cv2.VideoCapture(cap_id)
     # set_camera(cap)
