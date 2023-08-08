@@ -3,7 +3,7 @@ import requests
 import json
 import numpy as np
 from client_utils.path import VISION_SERVER_IP_PATH, CAMERA_IMG_PATH
-from client_utils.others import wait_for_static, set_camera
+from client_utils.others import wait_for_static
 # from action.async_logical.lib.combine_action import get_rad_dist
 from action.physical.look import l_init, turn_neck
 from action.physical.ultrasound_measure import get_dist
@@ -12,14 +12,90 @@ from PIL import Image
 
 # cap_id = 1
 show_img_type = "consecutive"
+img_height = 480
+img_width = 640
+scan_cube_size = 5
+use_color_channel = 0
+
+y_start = 0
+y_end = img_height // 5 * 4
+x_start = img_width // 5
+x_end = img_width // 5 * 4
 
 
 # cap = cv2.VideoCapture(cap_id)
+def get_img():
+    succ = False
+    image = None
+    while not succ:
+        try:
+            image = Image.open(CAMERA_IMG_PATH)
+            succ = True
+        except Exception as e:
+            print(e)
+    return image
 
 
 def get_rad_dist(rad_bias):
     turn_neck(rad_bias)
     return get_dist()
+
+
+def get_charge_plugin(image):
+    data_yx = np.array(image).astype(int)
+    # data_yx_diff = np.abs(data_yx[0:-1, 0:-1, :] - data_yx[1:, 1:, :])
+    pooled_img = np.zeros([img_height // 5, img_width // 5])
+    # y_start = img_height // 3
+    for y in range(y_start, y_end, scan_cube_size):
+        for x in range(x_start, x_end, scan_cube_size):
+            pooled_ind_y = y // scan_cube_size
+            pooled_ind_x = x // scan_cube_size
+            pooled_img[pooled_ind_y, pooled_ind_x] = np.mean(data_yx[y:y + scan_cube_size, x:x + scan_cube_size, use_color_channel])
+            if pooled_img[pooled_ind_y, pooled_ind_x] >= 100:
+                if y > y_start and x > x_start and np.abs(pooled_img[pooled_ind_y, pooled_ind_x] - pooled_img[pooled_ind_y - 1, pooled_ind_x - 1]) > 50:
+                    edge_right = pooled_ind_x + 1
+                    pooled_img[pooled_ind_y, edge_right] = np.mean(data_yx[y:y + scan_cube_size, edge_right * scan_cube_size:edge_right * scan_cube_size + scan_cube_size, use_color_channel])
+                    while pooled_img[pooled_ind_y, edge_right] > pooled_img[pooled_ind_y, pooled_ind_x] - 50:
+                        edge_right += 1
+                        pooled_img[pooled_ind_y, edge_right] = np.mean(data_yx[y:y + scan_cube_size, edge_right * scan_cube_size:edge_right * scan_cube_size + scan_cube_size, use_color_channel])
+                    sz = (edge_right - pooled_ind_x) * scan_cube_size
+                    bias = (x + sz + x) / 2 - img_width / 2
+                    return x, y, sz, bias
+    return None, None, None, None
+
+
+# def get_charge_plugin(image):
+#     data_yx = np.array(image).astype(int)
+#     # data_yx_diff = np.abs(data_yx[0:-1, 0:-1, :] - data_yx[1:, 1:, :])
+#     pooled_img = np.zeros([img_height // 5, img_width // 5])
+#     # y_start = img_height // 3
+#     y_start = 0
+#     y_end = img_height // 3 * 2
+#     x_start = img_width // 4
+#     x_end = img_width // 4 * 3
+#     for y in range(y_start, y_end, scan_cube_size):
+#         for x in range(x_start, x_end, scan_cube_size):
+#             pooled_ind_y = y // scan_cube_size
+#             pooled_ind_x = x // scan_cube_size
+#             pooled_img[pooled_ind_y, pooled_ind_x] = np.mean(data_yx[y:y + scan_cube_size, x:x + scan_cube_size, use_color_channel])
+#             if pooled_img[pooled_ind_y, pooled_ind_x] >= 250 and \
+#                     (y > y_start and x > x_start and np.abs(
+#                         pooled_img[pooled_ind_y, pooled_ind_x] - pooled_img[pooled_ind_y - 1, pooled_ind_x - 1]) > 90):
+#                 edge_right = pooled_ind_x + 1
+#                 pooled_img[pooled_ind_y, edge_right] = np.mean(data_yx[y:y + scan_cube_size, edge_right * scan_cube_size:edge_right * scan_cube_size + scan_cube_size, use_color_channel])
+#                 while np.abs(pooled_img[pooled_ind_y, edge_right] - pooled_img[pooled_ind_y, edge_right - 1]) < 50:
+#                     edge_right += 1
+#                     pooled_img[pooled_ind_y, edge_right] = np.mean(data_yx[y:y + scan_cube_size, edge_right * scan_cube_size:edge_right * scan_cube_size + scan_cube_size, use_color_channel])
+#                 sz = (edge_right - pooled_ind_x) * scan_cube_size
+#                 bias = (x + sz + x) / 2 - img_width / 2
+#                 return x, y, sz, bias
+#     return None, None, None, None
+
+
+def get_charge_point():
+    wait_for_static(2)
+    image = get_img()
+    return get_charge_plugin(image)
 
 
 def get_objs():
@@ -30,13 +106,7 @@ def get_objs():
     # set_camera(cap)
     # ret, frame = cap.read()
     # _, image_encoded = cv2.imencode(".jpg", frame)
-    succ = False
-    while not succ:
-        try:
-            image = Image.open(CAMERA_IMG_PATH)
-            succ = True
-        except Exception as e:
-            print(e)
+    image = get_img()
     _, image_encoded = cv2.imencode(".jpg", np.array(image))
     image_bytes = image_encoded.tobytes()
     files = {"file": ("image.jpg", image_bytes, "image/jpeg")}
@@ -59,11 +129,11 @@ def calc_feature(resp_obj, self_stat):
     cent_loc_rad = (xmin_rad + xmax_rad) / 2
     loc_rad_bias = cent_loc_rad - 1 / 6 * np.pi
     dist = get_rad_dist(loc_rad_bias)
-    global_center_rad = self_stat["rad"] + loc_rad_bias
+    obj_to_self_rad = self_stat["rad"] + loc_rad_bias
     dist_nlp = "near" if dist < 50 else "mid" if dist < 200 else "far"
-    pos = position.get_obj_pos(self_stat, dist)
-    res = {"cls": cls, "loc_rad": loc_rad, "loc_rad_x": xmin, "loc_rad_bias": loc_rad_bias, "rad": global_center_rad,
-           "dist": dist, "dist_nlp": dist_nlp, "pos": pos}
+    o2s_pos = position.get_obj_pos(obj_to_self_rad, dist)
+    res = {"cls": cls, "loc_rad": loc_rad, "loc_rad_x": xmin, "loc_rad_bias": loc_rad_bias, "o2s_rad": obj_to_self_rad,
+           "dist": dist, "dist_nlp": dist_nlp, "o2s_pos": o2s_pos}
     print("calc_feature: ", res)
     return res
 
@@ -111,5 +181,5 @@ def analysis_vision(self_stat):
 
 
 if __name__ == '__main__':
-    print(analysis_vision({"pos": [-150, 150], "rad": -3.14 / 2}))
-    # print(get_rad_dist(-0.4))
+    # print(analysis_vision({"pos": [-150, 150], "rad": -3.14 / 2}))
+    print(get_charge_point())

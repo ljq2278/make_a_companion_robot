@@ -3,9 +3,9 @@ from sympy import Point, Circle
 import numpy as np
 
 
-def get_obj_pos(self_stat, obj_dist):
-    x = obj_dist * np.cos(self_stat["rad"]) + self_stat["pos"][0]
-    y = obj_dist * np.sin(self_stat["rad"]) + self_stat["pos"][1]
+def get_obj_pos(obj_to_self_rad, obj_dist):
+    x = obj_dist * np.cos(obj_to_self_rad)
+    y = obj_dist * np.sin(obj_to_self_rad)
     return [x, y]
 
 

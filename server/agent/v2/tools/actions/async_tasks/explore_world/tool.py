@@ -1,7 +1,7 @@
 """Tool for asking human input."""
 
 from typing import Callable, Optional
-
+import requests
 from pydantic import Field
 
 from langchain.callbacks.manager import (
@@ -9,14 +9,8 @@ from langchain.callbacks.manager import (
     CallbackManagerForToolRun,
 )
 from langchain.tools.base import BaseTool
-from .logical import do_find_person, do_query
-# from langchain.llms.base import LLM
-import numpy as np
-
-
-def _print_func(text: str) -> None:
-    print("\n")
-    print(text)
+from server_utils.others import get_async_task_info, task_priorities
+from server_utils.path import CLIENT_ACTION_IP_PATH
 
 
 class ExploreWorldRun(BaseTool):
@@ -25,7 +19,7 @@ class ExploreWorldRun(BaseTool):
     name = "exploreWorld"
     description = (
         "Useful for when you want to explore the world. "
-        "The input is how much time you want to explore."
+        "input is the exploring time you want to spend. "
     )
     # llm: LLM = None
     input_func: Callable = Field(default_factory=lambda: input)
@@ -36,13 +30,15 @@ class ExploreWorldRun(BaseTool):
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ) -> str:
         """Use the Human input tool."""
-        res = do_find_person()
-        if res:
-            final_res = do_query(query)
+        task_nm, task_state, task_res = get_async_task_info()
+        if task_state == "on doing" and task_priorities[task_nm] >= task_priorities["exploreWorld"]:
+            return task_nm + " is still on doing, current task can not be started. "
         else:
-            final_res = "find human failed. no response. "
-        print("Observation: " + final_res)
-        return final_res
+            response = requests.post(CLIENT_ACTION_IP_PATH, data={'action': "exploreWorld"})
+            if response.status_code == 200:
+                return "start explore the world , result can be checked later in the information from sensors. "
+            else:
+                return "something wrong with task startup, try it later. "
 
     async def _arun(
             self,

@@ -39,10 +39,10 @@ def turn_neck(rad_bias):
     wait_for_static(1)
 
 
-def l_up():
+def l_up(angle=vertical_up_angle):
     # kit.servo[1].angle = vertical_stand_angle
     # turn_angle_vert(vertical_stand_angle, vertical_up_angle)
-    kit.servo[1].angle = vertical_up_angle
+    kit.servo[1].angle = angle
     time.sleep(0.5)
     kit.servo[3].angle = horiz_stand_angle
     time.sleep(0.5)
@@ -123,8 +123,9 @@ def unset_motor():
     kit.servo[3].angle = None
 
 
-def get_direct():
-    return {"hori_rot": kit.servo[3].angle, "vert_rot": kit.servo[1].angle}
+def get_head_direct():
+    # return {"hori_rot": kit.servo[3].angle, "vert_rot": kit.servo[1].angle}
+    return kit.servo[3].angle, kit.servo[1].angle
 
 
 look_funcs = {
@@ -137,5 +138,7 @@ look_funcs = {
 }
 
 if __name__ == '__main__':
-    turn_neck(0)
-    # l_init()
+    # turn_neck(0)
+    # l_up()
+    l_init()
+    # l_up(vertical_stand_angle - 80)

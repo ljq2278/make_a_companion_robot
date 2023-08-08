@@ -2,16 +2,31 @@ import requests
 
 from action.physical.ultrasound_measure import get_dist
 from action.physical.voltage import get_voltage
+from action.physical.look import get_head_direct
+from action.physical.compass import get_body_direct
 from action.physical.infrared_induction import check_people_near
 from client_utils.path import OTHERS_SERVER_IP_PATH
+from client_utils.others import get_task_state
 from formats.states_format import Others
 
 
 def send_data():
+    body_direct = get_body_direct()
+    head_hori, head_vert = get_head_direct()
     us_dist = get_dist()
     voltage = get_voltage()
-    person_near = check_people_near() # take 2 seconds
-    others = Others(us_dist=str(int(us_dist))+"cm", voltage=voltage,person_near=person_near)
+    person_near = check_people_near()  # take 2 seconds
+    last_async_task_info = get_task_state()
+    others = Others(us_dist=int(us_dist),
+                    voltage=voltage,
+                    person_near=person_near,
+                    head_hori=int(head_hori),
+                    head_vert=int(head_vert),
+                    body_direct=int(body_direct),
+                    last_async_task=last_async_task_info["last_async_task"],
+                    last_async_task_state=last_async_task_info["last_async_task_state"],
+                    last_async_task_result=last_async_task_info["last_async_task_result"]
+                    )
     others_dict = vars(others)
     print('send data ... ', others_dict)
     response = requests.post(OTHERS_SERVER_IP_PATH, json=others_dict)

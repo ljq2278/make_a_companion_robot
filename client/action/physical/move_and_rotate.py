@@ -101,9 +101,9 @@ def r_right(rot_tm, rot_speed=90):
 
 if __name__ == '__main__':
     try:
-        # m_up(10, 20)
-        # m_down(5, 20)
-        r_left(0.5)
+        # m_up(0.5, 10)
+        m_down(5, 20)
+        # r_left(0.5)
         # t_right(50, 3)
         # _stop()
         # time.sleep(2)

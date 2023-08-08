@@ -1,1 +1,1 @@
-{"us_dist": "86cm", "voltage": 7.4959999999999996, "person_near": false}
+{"us_dist": 120, "voltage": 12.8, "person_near": true, "head_hori": 94, "head_vert": 99, "body_direct": 157, "last_async_task": "exploreWorld", "last_async_task_state": "complete", "last_async_task_result": "find new objs <Bottle, Chair>"}
