@@ -59,7 +59,7 @@ set_camera(cap1)
 # subprocess.Popen(["/usr/bin/uvcdynctrl", " -d /dev/video1 -S 6:10 '(LE)0x0400'"])
 # time.sleep(1)
 show_img_type = "consecutive"  # consecutive, single
-send_frame_rate = 24
+send_frame_rate = 10
 
 
 def save_frame(frame):
@@ -69,11 +69,12 @@ def save_frame(frame):
 
 def send_image(cont):
     global cap1
-    print("CAP_PROP_FPS: ", cap1.get(cv2.CAP_PROP_FPS))
     print("read start ###########################")
     ret, frame = cap1.read()
     print("read end ###########################")
     if cont % send_frame_rate == 0:
+        print("CAP_PROP_FPS: ", cap1.get(cv2.CAP_PROP_FPS))
+        # frame = np.power(frame.astype(float), 0.9).astype(np.uint8)
         save_frame(frame)
         _, image_encoded = cv2.imencode(".jpg", frame)
         image_bytes = image_encoded.tobytes()
@@ -92,6 +93,14 @@ if __name__ == "__main__":
     try:
         while cap1.isOpened():
             send_image(cont)
+            # if not test_camera():
+            #     print("read end")
+            # time.sleep(1)
             cont += 1
+            if cont - send_frame_rate == 1:
+                #     # set_camera2(cap1)
+                #     # os.system("bash ~/camera.sh")
+                os.system("/usr/bin/uvcdynctrl -d /dev/video1 -S 6:10 '(LE)0x0400'")
+            #     # subprocess.Popen(["/usr/bin/uvcdynctrl", " -d /dev/video1 -S 6:10 '(LE)0x0400'"])
     finally:
         cap1.release()

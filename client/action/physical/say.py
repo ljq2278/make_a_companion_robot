@@ -17,8 +17,8 @@ engine.setProperty('rate', 120)  # lower than 200
 
 
 # Raspberry Pi configuration.
-DC = 21
-RST = 22
+DC = 16
+RST = 13
 SPI_PORT = 0
 SPI_DEVICE = 0
 line_len = 28

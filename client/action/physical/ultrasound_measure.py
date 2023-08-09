@@ -5,7 +5,7 @@ from client_utils.others import wait_for_static
 
 # utr_TRIG = 11  # 超声波模块Tring控制管脚
 # utr_ECHO = 35  # 超声波模块Echo控制管脚
-utr_TRIG = 17  # 超声波模块Tring控制管脚
+utr_TRIG = 20  # 超声波模块Tring控制管脚
 utr_ECHO = 19  # 超声波模块Echo控制管脚
 
 GPIO.setmode(GPIO.BCM)

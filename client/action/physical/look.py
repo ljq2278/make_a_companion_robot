@@ -140,5 +140,7 @@ look_funcs = {
 if __name__ == '__main__':
     # turn_neck(0)
     # l_up()
+    l_right()
+    l_left()
     l_init()
     # l_up(vertical_stand_angle - 80)

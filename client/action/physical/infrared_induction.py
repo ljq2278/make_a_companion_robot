@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 import numpy as np
 import time
 
-data_port = 20
+data_port = 21
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(data_port, GPIO.IN)

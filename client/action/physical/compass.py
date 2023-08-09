@@ -13,8 +13,8 @@ Y_axis_H = 0x07  # Address of Y-axis MSB data register
 declination = -0.00669  # define declination angle of location where measurement going to be done
 pi = 3.14159265359  # define pi value
 
-x_min, x_max = -637, -373
-y_min, y_max = -352, -130
+x_min, x_max = -677, -423
+y_min, y_max = -261, -27
 z_min, z_max = -121, -87
 
 
