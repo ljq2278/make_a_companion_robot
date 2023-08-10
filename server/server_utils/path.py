@@ -22,3 +22,5 @@ MODEL_PATH = PRJ_PATH+"models/"
 ASYNC_ACTION_FLG_PATH = PRJ_PATH+"agent/v2/tools/actions/async/on_action.txt"
 
 CLIENT_ACTION_IP_PATH = "http://192.168.1.2:8001/action/"
+
+DIALOG_SHOW_IP_PATH = "http://192.168.1.9:8004/message/"

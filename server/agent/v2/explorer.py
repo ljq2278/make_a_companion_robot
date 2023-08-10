@@ -10,14 +10,14 @@ from tools.actions.async_tasks.find_obj.tool import FindObjRun
 from tools.actions.async_tasks.go_charge.tool import GoChargeRun
 from tools.actions.async_tasks.find_person_chat.tool import FindPersonRun
 from tools.query_self.tool import AskSelfRun
-from server_utils.path import CLIENT_ACTION_IP_PATH
+from server_utils.path import CLIENT_ACTION_IP_PATH, DIALOG_SHOW_IP_PATH
 from server_utils.others import get_nl_states
 # from memory.buffer import ConversationBufferMemory
 # from memory.summary_buffer import ConversationSummaryBufferMemory
 from langchain.memory.summary_buffer import ConversationSummaryBufferMemory
 from agents.mrkl.prompt import FORMAT_INSTRUCTIONS, PREFIX, SUFFIX
 from langchain import LLMChain
-import numpy as np
+from server_utils.others import send_message
 import json
 import os
 
@@ -69,6 +69,7 @@ if __name__ == '__main__':
         ipt = "there is some information from sensors. "
         ipt += json.dumps(states, ensure_ascii=False)
         print("inputs: ", ipt)
+        send_message(DIALOG_SHOW_IP_PATH, data={"content": "<Environment>: " + ipt + "\n"})
         while True:
             try:
                 output = agent_executor.run(input=ipt)
@@ -77,10 +78,11 @@ if __name__ == '__main__':
             except Exception as e:
                 print(e)
         txt_mood = parse_txt_and_mood(output)
-        response = requests.post(CLIENT_ACTION_IP_PATH, data={'action': "show_mood#" + txt_mood["mood"]})
+        response = send_message(CLIENT_ACTION_IP_PATH, data={'action': "show_mood#" + txt_mood["mood"]})
         if response.text != "true":
             print("show mood failed in main!")
-        response = requests.post(CLIENT_ACTION_IP_PATH, data={'action': "say#" + txt_mood["speech"]})
+        response = send_message(CLIENT_ACTION_IP_PATH, data={'action': "say#" + txt_mood["speech"]})
         if response.text != "true":
             print("talk failed in main!")
+        send_message(DIALOG_SHOW_IP_PATH, data={"content": "<Eva>: " + txt_mood["speech"] + "[" + txt_mood["mood"] + "]" + "\n"})
         wait_for_human_response()

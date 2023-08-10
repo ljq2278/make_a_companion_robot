@@ -35,4 +35,15 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
         set_task_state("findPersonChat", "complete", "something exception happen when searching a person")
+#
+# if __name__ == '__main__':
+#     # print(rot_to_center_charge_point(0))
+#     try:
+#         words = sys.argv[1]
+#         print(words)
+#         read_alound_and_show_text(words)
+#         set_task_state("findPersonChat", "complete", "success")
+#     except Exception as e:
+#         print(e)
+#         set_task_state("findPersonChat", "complete", "something exception happen when searching a person")
 

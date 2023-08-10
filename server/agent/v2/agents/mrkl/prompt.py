@@ -16,6 +16,7 @@ Observation: the result of the action
 ... (this Thought/Action/Action Input/Observation can repeat N times)
 Thought: I now know the final response
 Final Response: the final response to the conversation input. [your mood]
+... (if response is words to human message, add prefix <say to human> to the Final Response, otherwise Final Response just your action summary, add prefix <action info>)
 
 """
 
@@ -28,9 +29,9 @@ Conversation_Input: there is some information from sensors.
 Thought: everything seems all right. I may look for a person to chat
 Action: lookforPerson
 Action Input: hello? anybody here? [confused]
-Observation: no response
+Observation: start task lookforPerson, result can be checked later in the information from sensors.
 Thought: it seems that no one is here
-Final Response: I can go to do some other exploration.[normal]
+Final Response: <action info> I am looking for a person, result would be found later. [normal]
 
 Conversation_Input: there is some information from sensors. 
 ['enough voltage':'yes'，'head vision':'shoe, box','head position':'left up', 'obstacle ahead':'yes','human message':'what are you doing, Eva?']
@@ -39,7 +40,7 @@ Action: askSelf
 Action Input: what am I doing? [confused]
 Observation: I am exploring the space.
 Thought: I now know the final response
-Final Response: I am exploring the space.[happy]
+Final Response: <say to human> I am exploring the space.[happy]
 
 Begin!
 {chat_history}

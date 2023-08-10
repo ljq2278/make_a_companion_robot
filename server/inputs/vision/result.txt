@@ -1,1 +1,5 @@
 Chair
+Bottle
+Chair
+Laptop
+Person

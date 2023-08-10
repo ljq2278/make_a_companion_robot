@@ -4,7 +4,7 @@ from inputs.vision.api import get_objs
 from inputs.keyboard.api import get_keyboard_input
 from inputs.others.api import get_others_dict
 from server_utils.path import CLIENT_ACTION_IP_PATH
-import json
+
 
 task_priorities = {
     "exploreWorld": 0,
@@ -12,6 +12,11 @@ task_priorities = {
     "findPersonChat": 2,
     "goCharge": 3
 }
+
+
+def send_message(addr, data):
+    response = requests.post(addr, data=data)
+    return response
 
 
 def parse_txt_and_mood(txt):
@@ -29,7 +34,7 @@ def parse_txt_and_mood(txt):
     return res
 
 
-def wait_for_human_response(tm=20):
+def wait_for_human_response(tm=15):
     time.sleep(tm)
 
 
@@ -48,7 +53,7 @@ def get_async_task_return(cur_task, query):
     if task_state == "on doing" and task_priorities[task_nm] >= task_priorities[cur_task]:
         res = task_nm + " is still on doing, current task can not be started. "
     else:
-        response = requests.post(CLIENT_ACTION_IP_PATH, data={'action': cur_task + "#" + query})
+        response = send_message(CLIENT_ACTION_IP_PATH, data={'action': cur_task + "#" + query})
         if response.status_code == 200:
             res = "start task <%s>, result can be checked later in the information from sensors. " % cur_task
         else:
