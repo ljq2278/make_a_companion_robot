@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append(r'/home/pi/Code/client')
 # assume that the obj is always filled and obj is always in the vertical plane with the obstacle below.
 # and distance meature is aways accurate
@@ -22,8 +23,10 @@ def random_rotate(self_stat):
 
 
 def random_explore(self_stat, mv_speed=position.m_speed, mx_mv_tm=5):
-    self_stat = random_rotate(self_stat)
-    max_dist_forward = vision.get_rad_dist(0)
+    max_dist_forward = 10
+    while max_dist_forward < 80:
+        self_stat = random_rotate(self_stat)
+        max_dist_forward = vision.get_rad_dist(0)
     print("random_explore, max_dist_forward: ", max_dist_forward)
     if 10 < max_dist_forward < 1000:
         mv_tm = min(np.random.random() * mx_mv_tm, (max_dist_forward - 4) / mv_speed)
@@ -93,9 +96,9 @@ if __name__ == '__main__':
     try:
         stat = {"pos": [0, 0], "rad": get_body_direct(use_rad=True)}
         feats, s_stat = one_time_explore(stat)
-        if len(feats)>0:
-            read_alound_and_show_text("I find "+", ".join([feat["cls"] for feat in feats]))
-            set_task_state("exploreWorld", "complete", "I find "+", ".join([feat["cls"] for feat in feats]))
+        if len(feats) > 0:
+            read_alound_and_show_text("I find " + ", ".join([feat["cls"] for feat in feats]))
+            set_task_state("exploreWorld", "complete", "I find " + ", ".join([feat["cls"] for feat in feats]))
         else:
             read_alound_and_show_text("I find nothing new")
             set_task_state("exploreWorld", "complete", "I find nothing new")

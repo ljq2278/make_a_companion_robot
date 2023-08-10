@@ -1,6 +1,8 @@
 import RPi.GPIO as GPIO
 import time
 from action.physical.compass import get_body_direct
+import action.physical.laser as laser
+import action.physical.ultrasound_measure as us
 
 PWMA = 18
 AIN1 = 22
@@ -26,6 +28,8 @@ L_Motor.start(0)
 R_Motor = GPIO.PWM(PWMB, 100)
 R_Motor.start(0)
 
+default_mv_speed = 20
+default_rot_speed = 90
 
 def motor_to_mv_speed(motor_speed):
     return 17.225 / 50 * motor_speed
@@ -52,7 +56,8 @@ def _stop():
     GPIO.output(BIN1, False)  # BIN1
 
 
-def m_up(mv_tm, mv_speed=20):
+def m_up(mv_tm, mv_speed=default_mv_speed):
+    mv_tm = min(laser.get_dist() - 10, mv_tm * mv_speed) / mv_speed
     motor_speed = mv_speed_to_motor(mv_speed)
     L_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(AIN2, False)  # AIN2
@@ -64,7 +69,8 @@ def m_up(mv_tm, mv_speed=20):
     _stop()
 
 
-def m_down(mv_tm, mv_speed=20):
+def m_down(mv_tm, mv_speed=default_mv_speed):
+    mv_tm = min(us.get_dist() - 10, mv_tm * mv_speed) / mv_speed
     motor_speed = mv_speed_to_motor(mv_speed)
     L_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(AIN2, True)  # AIN2
@@ -76,7 +82,7 @@ def m_down(mv_tm, mv_speed=20):
     _stop()
 
 
-def r_left(rot_tm, rot_speed=90):
+def r_left(rot_tm, rot_speed=default_rot_speed):
     motor_speed = rot_speed_to_motor(rot_speed)
     L_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(AIN2, True)  # AIN2
@@ -88,7 +94,7 @@ def r_left(rot_tm, rot_speed=90):
     _stop()
 
 
-def r_right(rot_tm, rot_speed=90):
+def r_right(rot_tm, rot_speed=default_rot_speed):
     motor_speed = rot_speed_to_motor(rot_speed)
     L_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(AIN2, False)  # AIN2
@@ -110,6 +116,12 @@ def rotate_to_dest_rad(dest_rad):
             r_left(0.1)
         cur_rad = get_body_direct(use_rad=True)
 
+
+move_funcs = {
+    "up": m_up,
+    "back": m_down,
+    "rotate": rotate_to_dest_rad,
+}
 
 if __name__ == '__main__':
     try:

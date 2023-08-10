@@ -2,6 +2,7 @@ from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import JSONResponse, Response
 import logging
 from action.physical.look import look_funcs, l_init, unset_motor
+from action.physical.move_and_rotate import move_funcs, default_mv_speed
 from action.physical.say import read_alound_and_show_text
 from action.physical.show_mood import show_mood
 # from action.physical.move_and_rotate import r_right
@@ -46,6 +47,12 @@ async def do_action(action: str = Form(...)):
             act_param = action_full[1]
         if act in look_funcs.keys():
             look_funcs[act]()
+        elif act in move_funcs.keys():
+            if act == "rotate":
+                input_param = int(act_param)
+            else:
+                input_param = int(act_param) / default_mv_speed
+            move_funcs[act](input_param)
         elif act == "show_mood":
             show_mood(act_param)
         elif act == "say":

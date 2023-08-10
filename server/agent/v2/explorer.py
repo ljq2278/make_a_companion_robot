@@ -10,6 +10,8 @@ from tools.actions.async_tasks.find_obj.tool import FindObjRun
 from tools.actions.async_tasks.go_charge.tool import GoChargeRun
 from tools.actions.async_tasks.find_person_chat.tool import FindPersonRun
 from tools.query_self.tool import AskSelfRun
+from tools.actions.say_to_human.tool import SayToHumanRun
+from tools.actions.move_and_rotate.tool import MoveAndRotateRun
 from server_utils.path import CLIENT_ACTION_IP_PATH, DIALOG_SHOW_IP_PATH
 from server_utils.others import get_nl_states
 # from memory.buffer import ConversationBufferMemory
@@ -37,6 +39,8 @@ if __name__ == '__main__':
         AskSelfRun(memory=memory, llm=llm),
         FindPersonRun(),
         FindObjRun(),
+        SayToHumanRun(),
+        MoveAndRotateRun(),
         # GoChargeRun(),
         ExploreWorldRun()
 

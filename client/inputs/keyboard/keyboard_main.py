@@ -78,7 +78,10 @@ if __name__ == '__main__':
                         else:
                             if len(buffer) > 0:
                                 buffer.pop(-1)
-                        draw_text(char)
+                        try:
+                            draw_text(char)
+                        except Exception as e:
+                            print(e)
             elif key_event.keystate == KeyEvent.key_up and key_event.keycode in ['KEY_LEFTSHIFT', 'KEY_RIGHTSHIFT']:
                 # The 'Shift' key was released
                 shift_pressed = False
