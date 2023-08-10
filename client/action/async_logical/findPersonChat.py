@@ -1,16 +1,11 @@
+import sys
+sys.path.append(r'/home/pi/Code/client')
 from action.physical.move_and_rotate import r_right, r_left, m_up
 from action.physical.say import read_alound_and_show_text
 from action.async_logical.lib import vision
 from action.async_logical.lib import position
 import numpy as np
 from client_utils.others import set_task_state
-import sys
-
-# m_speed = 20
-# r_speed = 90
-#
-# mv_unit = 10
-# rot_unit = 60
 
 
 def find_person():
@@ -27,12 +22,17 @@ def find_person():
 
 if __name__ == '__main__':
     # print(rot_to_center_charge_point(0))
-    words = sys.argv[1]
-    print(words)
-    found = find_person()
-    if found:
-        read_alound_and_show_text(words)
-        set_task_state("findPersonChat", "complete", "success, it's in front of you")
-    else:
-        read_alound_and_show_text("where is the person?")
-        set_task_state("findPersonChat", "complete", "failed, can not find a person")
+    try:
+        words = sys.argv[1]
+        print(words)
+        found = find_person()
+        if found:
+            read_alound_and_show_text(words)
+            set_task_state("findPersonChat", "complete", "success, it's in front of you")
+        else:
+            read_alound_and_show_text("where is the person?")
+            set_task_state("findPersonChat", "complete", "failed, can not find a person")
+    except Exception as e:
+        print(e)
+        set_task_state("findPersonChat", "complete", "something exception happen when searching a person")
+

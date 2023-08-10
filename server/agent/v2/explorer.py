@@ -24,12 +24,11 @@ import os
 # from langchain.agents import load_tools
 
 # max_iterations = 20
-listen_file = "../../auditory/record.txt"
+
 llm = get_llama_llm()
 nm = 'Eva'
 conversation_size = 256
 memory = ConversationSummaryBufferMemory(memory_key="chat_history", ai_prefix=nm + "(me)", human_prefix="Environment", llm=llm, max_token_limit=conversation_size)
-
 
 if __name__ == '__main__':
 
@@ -38,9 +37,8 @@ if __name__ == '__main__':
         AskSelfRun(memory=memory, llm=llm),
         FindPersonRun(),
         FindObjRun(),
-        GoChargeRun(),
+        # GoChargeRun(),
         ExploreWorldRun()
-        # ResponseToEnv(memory=memory, llm=llm)
 
     ]
     prompt = ZeroShotAgent.create_prompt(
@@ -70,6 +68,7 @@ if __name__ == '__main__':
         # memory.human_prefix = 'Environment'
         ipt = "there is some information from sensors. "
         ipt += json.dumps(states, ensure_ascii=False)
+        print("inputs: ", ipt)
         while True:
             try:
                 output = agent_executor.run(input=ipt)

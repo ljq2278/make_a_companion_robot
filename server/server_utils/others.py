@@ -1,7 +1,9 @@
 import time
+import requests
 from inputs.vision.api import get_objs
 from inputs.keyboard.api import get_keyboard_input
 from inputs.others.api import get_others_dict
+from server_utils.path import CLIENT_ACTION_IP_PATH
 import json
 
 task_priorities = {
@@ -41,6 +43,20 @@ def get_async_task_info():
     return res["last_async_task"], res["last_async_task_state"], res["last_async_task_result"]
 
 
+def get_async_task_return(cur_task, query):
+    task_nm, task_state, task_res = get_async_task_info()
+    if task_state == "on doing" and task_priorities[task_nm] >= task_priorities[cur_task]:
+        res = task_nm + " is still on doing, current task can not be started. "
+    else:
+        response = requests.post(CLIENT_ACTION_IP_PATH, data={'action': cur_task + "#" + query})
+        if response.status_code == 200:
+            res = "start task <%s>, result can be checked later in the information from sensors. " % cur_task
+        else:
+            res = "something wrong with task startup, try it later. "
+    print("observation: " + res)
+    return res
+
+
 def get_states():
     res = get_others_dict()
     res.update(
@@ -58,7 +74,7 @@ def get_states():
 
 def get_nl_states():
     res = get_states()
-    del res["us_dist"]
+    del res["up_dist"]
     if res["voltage"] <= 6.5:
         res["voltage"] = "low"
     else:

@@ -1,13 +1,11 @@
+import sys
+sys.path.append(r'/home/pi/Code/client')
+
 import cv2
 import requests
 import os
 from PIL import Image
-import numpy as np
-import subprocess
-import time
-import sys
 
-sys.path.append(r'/home/pi/Code/client')
 from client_utils.path import VISION_SERVER_IP_PATH, CAMERA_IMG_PATH, PHYSICS_PARAM_BLACK_CAMERA
 
 
@@ -58,7 +56,7 @@ cap1 = cv2.VideoCapture(cap_id)
 set_camera(cap1)
 # subprocess.Popen(["/usr/bin/uvcdynctrl", " -d /dev/video1 -S 6:10 '(LE)0x0400'"])
 # time.sleep(1)
-show_img_type = "consecutive"  # consecutive, single
+show_img_type = "none"  # consecutive, single
 send_frame_rate = 24
 
 

@@ -24,13 +24,13 @@ print("--------------------")
 
 vl53.start_ranging()
 
-def get_distance():
+def get_dist():
     return vl53.distance
 
 if __name__ == '__main__':
     while True:
         if vl53.data_ready:
             # print("Distance: {} cm".format(vl53.distance))
-            print("Distance: {} cm".format(get_distance()))
+            print("Distance: {} cm".format(get_dist()))
             vl53.clear_interrupt()
             time.sleep(1.0)

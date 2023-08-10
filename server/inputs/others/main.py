@@ -12,7 +12,7 @@ app = FastAPI()
 
 @app.post("/others/")
 async def receive(data: OthersInput):
-    others = Others(us_dist=data.us_dist, voltage=data.voltage, person_near=data.person_near,
+    others = Others(up_dist=data.up_dist, voltage=data.voltage, person_near=data.person_near,
                     head_hori=data.head_hori, head_vert=data.head_vert, body_direct=data.body_direct,
                     last_async_task=data.last_async_task, last_async_task_state=data.last_async_task_state, last_async_task_result=data.last_async_task_result)
     f = open(OTHERS_DATA, 'w', encoding='utf-8')

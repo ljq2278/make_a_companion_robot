@@ -9,8 +9,7 @@ from langchain.callbacks.manager import (
     CallbackManagerForToolRun,
 )
 from langchain.tools.base import BaseTool
-from server_utils.others import get_async_task_info, task_priorities
-from server_utils.path import CLIENT_ACTION_IP_PATH
+from server_utils.others import task_priorities, get_async_task_return
 
 
 class FindPersonRun(BaseTool):
@@ -32,15 +31,7 @@ class FindPersonRun(BaseTool):
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ) -> str:
         """Use the Human input tool."""
-        task_nm, task_state, task_res = get_async_task_info()
-        if task_state == "on doing" and task_priorities[task_nm] >= task_priorities["findPersonChat"]:
-            return task_nm + " is still on doing, current task can not be started. "
-        else:
-            response = requests.post(CLIENT_ACTION_IP_PATH, data={'action': "findPersonChat#" + query})
-            if response.status_code == 200:
-                return "start searching a person to chat, result can be checked later in the information from sensors. "
-            else:
-                return "something wrong with task startup, try it later. "
+        return get_async_task_return(self.name, query)
 
     async def _arun(
             self,

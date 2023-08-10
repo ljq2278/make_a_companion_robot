@@ -6,7 +6,7 @@ from client_utils.path import VISION_SERVER_IP_PATH, CAMERA_IMG_PATH
 from client_utils.others import wait_for_static
 # from action.async_logical.lib.combine_action import get_rad_dist
 from action.physical.look import l_init, turn_neck
-from action.physical.ultrasound_measure import get_dist
+from action.physical.laser import get_dist
 from action.async_logical.lib import position
 from PIL import Image
 

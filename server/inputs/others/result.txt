@@ -1,1 +1,1 @@
-{"us_dist": 120, "voltage": 12.8, "person_near": true, "head_hori": 94, "head_vert": 99, "body_direct": 157, "last_async_task": "exploreWorld", "last_async_task_state": "complete", "last_async_task_result": "find new objs <Bottle, Chair>"}
+{"up_dist": 102, "voltage": 7.077, "person_near": false, "head_hori": 118, "head_vert": 99, "body_direct": 60, "last_async_task": "findPersonChat", "last_async_task_state": "complete", "last_async_task_result": "success, it's in front of you"}

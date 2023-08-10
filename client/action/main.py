@@ -8,6 +8,9 @@ from action.physical.show_mood import show_mood
 # from action.async_logical.exploreWorld import one_time_explore
 from client_utils.others import set_task_state
 import subprocess
+import sys
+
+sys.path.append(r'/home/pi/Code/client')
 
 logging.basicConfig(level=logging.DEBUG)
 app = FastAPI()
@@ -48,9 +51,12 @@ async def do_action(action: str = Form(...)):
         elif act == "say":
             read_alound_and_show_text(act_param)
         elif act in async_task_set:
-            async_pid.kill()
+            try:
+                async_pid.kill()
+            except Exception as e:
+                print(e)
             set_task_state(act, "on doing", "")
-            async_pid = subprocess.Popen("python3 action/async_logical/%s.py %s" % (act, act_param))
+            async_pid = subprocess.Popen(["python3", "/home/pi/Code/client/action/async_logical/%s.py" % act, act_param])
         else:
             return Response(status_code=200, content="false")
         return Response(status_code=200, content="true")
@@ -60,4 +66,11 @@ async def do_action(action: str = Form(...)):
 
 
 if __name__ == '__main__':
-    show_mood("curious")
+    # show_mood("curious")
+    act = "findPersonChat"
+    act_param = "Hi there! Do you want to chat? [polite]"
+    async_pid = subprocess.Popen(["python3", "/home/pi/Code/client/action/async_logical/%s.py" % act, act_param])
+    print(async_pid)
+    import time
+
+    time.sleep(100000)

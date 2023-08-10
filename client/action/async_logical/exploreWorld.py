@@ -1,6 +1,8 @@
+import sys
+sys.path.append(r'/home/pi/Code/client')
 # assume that the obj is always filled and obj is always in the vertical plane with the obstacle below.
-# and ultrasound is aways accurate
-
+# and distance meature is aways accurate
+from action.physical.say import read_alound_and_show_text
 from action.physical.compass import get_body_direct
 from action.physical.move_and_rotate import m_up, rotate_to_dest_rad
 from action.async_logical.lib import vision
@@ -88,10 +90,16 @@ if __name__ == '__main__':
     # ang = 90
     # print(get_pos0_by_2dist_1angle_2pos(5, 5, ang, [0, 0], [5, 5]))
     # print(get_pos2_by_2dist_1angle_2pos(5, 5, ang, [0, 5], [0, 0]))
-    stat = {"pos": [0, 0], "rad": get_body_direct(use_rad=True)}
-    feats, s_stat = one_time_explore(stat)
-    if len(feats)>0:
-        set_task_state("exploreWorld", "complete", "I find "+", ".join([feat["cls"] for feat in feats]))
-    else:
-        set_task_state("exploreWorld", "complete", "I find nothing new")
-    # get_poses_by_base2()
+    try:
+        stat = {"pos": [0, 0], "rad": get_body_direct(use_rad=True)}
+        feats, s_stat = one_time_explore(stat)
+        if len(feats)>0:
+            read_alound_and_show_text("I find "+", ".join([feat["cls"] for feat in feats]))
+            set_task_state("exploreWorld", "complete", "I find "+", ".join([feat["cls"] for feat in feats]))
+        else:
+            read_alound_and_show_text("I find nothing new")
+            set_task_state("exploreWorld", "complete", "I find nothing new")
+        # get_poses_by_base2()
+    except Exception as e:
+        read_alound_and_show_text("something exception happen when explore the world")
+        set_task_state("findObj", "complete", "something exception happen when search the object")

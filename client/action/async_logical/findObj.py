@@ -1,5 +1,8 @@
+import sys
+sys.path.append(r'/home/pi/Code/client')
+
 from action.physical.move_and_rotate import r_right, r_left, m_up, rotate_to_dest_rad
-from action.physical.look import l_init, l_up, vertical_stand_angle
+from action.physical.say import read_alound_and_show_text
 from action.physical.compass import get_body_direct
 from client_utils.others import set_task_state
 from action.async_logical.lib import position
@@ -37,12 +40,16 @@ def go_to_pos(self_stat, pos):
 
 if __name__ == '__main__':
     # print(rot_to_center_charge_point(0))
-    obj_info = get_obj_info(sys.argv[1])
-    if obj_info is not None:
-        go_to_pos({"pos": [0, 0], "rad": get_body_direct()}, [int(t) for t in list(obj_info.keys())[0].split('_')])
-        rotate_to_dest_rad(int(obj_info[list(obj_info.keys())[0]][0]))
-        print("find dest obj! ")
-        set_task_state("findObj", "complete", "success, it's in front of you")
-    else:
-        print("find obj failed! ")
-        set_task_state("findObj", "complete", "failed, can not find it")
+    try:
+        obj_info = get_obj_info(sys.argv[1])
+        if obj_info is not None:
+            go_to_pos({"pos": [0, 0], "rad": get_body_direct()}, [int(t) for t in list(obj_info.keys())[0].split('_')])
+            rotate_to_dest_rad(int(obj_info[list(obj_info.keys())[0]][0]))
+            read_alound_and_show_text("find dest obj! ")
+            set_task_state("findObj", "complete", "success, it's in front of you")
+        else:
+            read_alound_and_show_text("find obj failed! ")
+            set_task_state("findObj", "complete", "failed, can not find it")
+    except Exception as e:
+        print(e)
+        set_task_state("findObj", "complete", "something exception happen when search the object")

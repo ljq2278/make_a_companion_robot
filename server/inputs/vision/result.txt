@@ -1,8 +1,1 @@
-Cabinet/shelf
-Pillow
-Book
-Picture/Frame
-Pillow
-Cup
-Book
-Cup
+Chair

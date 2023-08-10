@@ -1,6 +1,8 @@
-import requests
+import sys
+sys.path.append(r'/home/pi/Code/client')
 
-from action.physical.ultrasound_measure import get_dist
+import requests
+from action.physical.laser import get_dist
 from action.physical.voltage import get_voltage
 from action.physical.look import get_head_direct
 from action.physical.compass import get_body_direct
@@ -13,11 +15,11 @@ from formats.states_format import Others
 def send_data():
     body_direct = get_body_direct()
     head_hori, head_vert = get_head_direct()
-    us_dist = get_dist()
+    up_dist = get_dist()
     voltage = get_voltage()
     person_near = check_people_near()  # take 2 seconds
     last_async_task_info = get_task_state()
-    others = Others(us_dist=int(us_dist),
+    others = Others(up_dist=int(up_dist),
                     voltage=voltage,
                     person_near=person_near,
                     head_hori=int(head_hori),
