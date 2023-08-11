@@ -13,7 +13,7 @@ from tools.query_self.tool import AskSelfRun
 from tools.actions.say_to_human.tool import SayToHumanRun
 from tools.actions.move_and_rotate.tool import MoveAndRotateRun
 from server_utils.path import CLIENT_ACTION_IP_PATH, DIALOG_SHOW_IP_PATH
-from server_utils.others import get_nl_states
+from server_utils.others import States
 # from memory.buffer import ConversationBufferMemory
 # from memory.summary_buffer import ConversationSummaryBufferMemory
 from langchain.memory.summary_buffer import ConversationSummaryBufferMemory
@@ -27,6 +27,7 @@ import os
 
 # max_iterations = 20
 
+states = States()
 llm = get_llama_llm()
 nm = 'Eva'
 conversation_size = 256
@@ -68,10 +69,14 @@ if __name__ == '__main__':
     )
     while True:
         # time.sleep(0.5)
-        states = get_nl_states()
+        diff_states = states.get_critical_states()
+        if len(diff_states) == 0:
+            print("no state changed!\n")
+            time.sleep(2)
+            continue
         # memory.human_prefix = 'Environment'
         ipt = "there is some information from sensors. "
-        ipt += json.dumps(states, ensure_ascii=False)
+        ipt += json.dumps(diff_states, ensure_ascii=False)
         print("inputs: ", ipt)
         send_message(DIALOG_SHOW_IP_PATH, data={"content": "<Environment>: " + ipt + "\n"})
         while True:

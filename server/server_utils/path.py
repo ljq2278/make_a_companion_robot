@@ -7,6 +7,8 @@ PRJ_PATH = "D:/PycharmProjects/make_a_companion_robot/server/"
 # MOVE_ACTION_COMPLETE_FILE = PRJ_PATH+'agent/v1/tools/move/action_complete.txt'
 # MOVE_ACTION_RESULT_FILE = PRJ_PATH+"move/object.txt"
 
+AUDITORY_DATA = PRJ_PATH+'inputs/auditory/result.txt'
+AUDITORY_RAW_DATA = PRJ_PATH+'inputs/auditory/result.wav'
 KEYBOARD_DATA = PRJ_PATH+'inputs/keyboard/result.txt'
 OTHERS_DATA = PRJ_PATH+'inputs/others/result.txt'
 # ULTRASOUND_DATA = PRJ_PATH+'inputs/ultrasound/result.txt'
@@ -23,4 +25,4 @@ ASYNC_ACTION_FLG_PATH = PRJ_PATH+"agent/v2/tools/actions/async/on_action.txt"
 
 CLIENT_ACTION_IP_PATH = "http://192.168.1.2:8001/action/"
 
-DIALOG_SHOW_IP_PATH = "http://192.168.1.9:8004/message/"
+DIALOG_SHOW_IP_PATH = "http://192.168.1.9:8008/message/"

@@ -2,9 +2,9 @@ import time
 import requests
 from inputs.vision.api import get_objs
 from inputs.keyboard.api import get_keyboard_input
+from inputs.auditory.api import get_auditory_input
 from inputs.others.api import get_others_dict
 from server_utils.path import CLIENT_ACTION_IP_PATH
-
 
 task_priorities = {
     "exploreWorld": 0,
@@ -34,7 +34,7 @@ def parse_txt_and_mood(txt):
     return res
 
 
-def wait_for_human_response(tm=15):
+def wait_for_human_response(tm=10):
     time.sleep(tm)
 
 
@@ -62,30 +62,54 @@ def get_async_task_return(cur_task, query):
     return res
 
 
-def get_states():
-    res = get_others_dict()
-    res.update(
-        {
-            "head vision": get_objs(),
-        }
-    )
-    res.update(
-        {
-            "human message": get_keyboard_input(),
-        }
-    )
-    return res
+class States:
 
+    def __init__(self):
+        self.last_states = None
 
-def get_nl_states():
-    res = get_states()
-    del res["up_dist"]
-    if res["voltage"] <= 6.5:
-        res["voltage"] = "low"
-    else:
-        res["voltage"] = "sufficient"
-    return res
+    def get_states(self):
+        res = get_others_dict()
+        res.update(
+            {
+                "vision": get_objs(),
+            }
+        )
+        res.update(
+            {
+                "human keyboard message": get_keyboard_input(),
+            }
+        )
+        res.update(
+            {
+                "human oral message": get_auditory_input(),
+            }
+        )
+        return res
+
+    def get_nl_states(self):
+        res = self.get_states()
+        del res["up_dist"]
+        if res["voltage"] <= 6.5:
+            res["voltage"] = "low"
+        else:
+            res["voltage"] = "sufficient"
+        return res
+
+    def get_critical_states(self):
+        res = self.get_nl_states()
+        if self.last_states is None:
+            self.last_states = res
+            return res
+        else:
+            res_diff = {}
+            for k, v in res.items():
+                if self.last_states[k] != v:
+                    res_diff[k] = v
+            if res["voltage"] == "low":
+                res_diff["voltage"] = "low"
+            self.last_states = res
+            return res_diff
 
 
 if __name__ == '__main__':
-    get_nl_states()
+    States().get_nl_states()

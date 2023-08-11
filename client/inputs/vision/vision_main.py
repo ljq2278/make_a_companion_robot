@@ -49,7 +49,7 @@ def set_camera(cap):
     return
 
 
-cap_id = 1
+cap_id = 0
 # cap_id += + cv2.CAP_DSHOW
 cap1 = cv2.VideoCapture(cap_id)
 # os.system("bash ~/camera.sh")

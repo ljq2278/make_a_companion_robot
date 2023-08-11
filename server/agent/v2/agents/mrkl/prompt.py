@@ -25,7 +25,7 @@ if the Observation is "the action input is the final response", that means your 
 these are some examples: 
 
 Conversation_Input: there is some information from sensors. 
-['enough voltage':'yes'，'head vision':'shoe, box','head direction':'left up', 'obstacle ahead':'yes','human message':'']
+['voltage':'sufficient', 'vision':'shoe, box', 'human message':'']
 Thought: everything seems all right. I may look for a person to chat
 Action: lookforPerson
 Action Input: hello? anybody here? [confused]
@@ -34,7 +34,7 @@ Thought: it seems that no one is here
 Final Response: <action info> I am looking for a person, result would be found later. [normal]
 
 Conversation_Input: there is some information from sensors. 
-['enough voltage':'yes'，'head vision':'shoe, box','head position':'left up', 'obstacle ahead':'yes','human message':'what are you doing, Eva?']
+['voltage':'sufficient', 'vision':'shoe, box', 'human message':'what are you doing, Eva?']
 Thought: there is human message in the information, I must priority processing the message.
 Action: askSelf
 Action Input: what am I doing? [confused]

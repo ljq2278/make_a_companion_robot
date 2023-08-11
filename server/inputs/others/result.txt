@@ -1,1 +1,1 @@
-{"up_dist": 19, "voltage": 7.069, "person_near": true, "head_hori": 94, "head_vert": 99, "body_direct": -140, "last_async_task": "findPersonChat", "last_async_task_state": "complete", "last_async_task_result": "failed, can not find a person"}
+{"up_dist": 137, "voltage": 7.023000000000001, "person_near": true, "head_hori": 101, "head_vert": 99, "body_direct": 105, "last_async_task": "findObj", "last_async_task_state": "complete", "last_async_task_result": "failed, can not find it"}
