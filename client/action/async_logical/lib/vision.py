@@ -1,15 +1,20 @@
+import sys
+
+sys.path.append(r'/home/pi/Code/client')
 import cv2
 import requests
 import json
 import numpy as np
-from client_utils.path import VISION_SERVER_IP_PATH, CAMERA_IMG_PATH
+from client_utils.path import VISION_SERVER_IP_PATH, CAMERA_IMG_PATH, PREV_IMG_PATH, MAP_RECORD_PATH
 from client_utils.others import wait_for_static
+from action.physical.compass import get_body_direct
 # from action.async_logical.lib.combine_action import get_rad_dist
 from action.physical.look import l_init, turn_neck
+from action.physical.move_and_rotate import rotate_to_dest_rad
 from action.physical.laser import get_dist
 from action.async_logical.lib import position
 from PIL import Image
-
+import time
 # cap_id = 1
 show_img_type = "consecutive"
 img_height = 480
@@ -23,22 +28,40 @@ x_start = img_width // 5
 x_end = img_width // 5 * 4
 bright_thresh = 100
 
-# cap = cv2.VideoCapture(cap_id)
+#
+# def set_camera(cap):
+#     cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('H', '2', '6', '4'))
+#     print("CAP_PROP_BRIGHTNESS: ", cap.get(cv2.CAP_PROP_BRIGHTNESS))
+#     cap.set(cv2.CAP_PROP_CONTRAST, 32)  # 对比度 32
+#     print("CAP_PROP_CONTRAST: ", cap.get(cv2.CAP_PROP_CONTRAST))
+#     cap.set(cv2.CAP_PROP_SATURATION, 64)  # 饱和度 64
+#     print("CAP_PROP_SATURATION: ", cap.get(cv2.CAP_PROP_SATURATION))
+#     cap.set(cv2.CAP_PROP_HUE, 0)  # 色调 0
+#     cap.set(cv2.CAP_PROP_EXPOSURE, -4)  # 曝光 -4
+#     return
+#
+# cap_id = 0
+# # cap_id += + cv2.CAP_DSHOW
+# cap1 = cv2.VideoCapture(cap_id)
+# # os.system("bash ~/camera.sh")
+# set_camera(cap1)
+# # subprocess.Popen(["/usr/bin/uvcdynctrl", " -d /dev/video1 -S 6:10 '(LE)0x0400'"])
+# # time.sleep(1)
+# send_frame_rate = 24
+# pre_camera_img = None
+
+
 def get_img():
     succ = False
     image = None
     while not succ:
         try:
+            time.sleep(0.5)
             image = Image.open(CAMERA_IMG_PATH)
             succ = True
         except Exception as e:
             print(e)
     return image
-
-
-def get_rad_dist(rad_bias):
-    turn_neck(rad_bias)
-    return get_dist()
 
 
 def get_charge_plugin(image):
@@ -66,22 +89,33 @@ def get_charge_plugin(image):
     return None, None, None, None
 
 
-
 def get_charge_point():
     wait_for_static(2)
     image = get_img()
     return get_charge_plugin(image)
 
 
+def record(self_stat, features):
+    print("record: ", features)
+    map_record_dict = json.load(open(MAP_RECORD_PATH, 'r', encoding='utf-8'))
+    for feat in features:
+        if feat["cls"] not in map_record_dict.keys():
+            map_record_dict[feat["cls"]] = {}
+        view_pos = str(int(self_stat["pos"][0] // 10 * 10)) + "_" + str(int(self_stat["pos"][1] // 10 * 10))
+        if view_pos not in map_record_dict[feat["cls"]].keys():
+            map_record_dict[feat["cls"]][view_pos] = []
+        view_direct = str(int(-np.rad2deg(feat["o2s_rad"]) // 30 * 30))
+        if view_direct not in map_record_dict[feat["cls"]][view_pos]:
+            map_record_dict[feat["cls"]][view_pos].append(view_direct)
+    json.dump(map_record_dict, open(MAP_RECORD_PATH, 'w', encoding='utf-8'))
+    return
+
+
 def get_objs():
     # global cap
-    wait_for_static(4)
-    # cap.release()
-    # cap = cv2.VideoCapture(cap_id)
-    # set_camera(cap)
-    # ret, frame = cap.read()
-    # _, image_encoded = cv2.imencode(".jpg", frame)
+    wait_for_static(2)
     image = get_img()
+    # ret, image = cap1.read()
     _, image_encoded = cv2.imencode(".jpg", np.array(image))
     image_bytes = image_encoded.tobytes()
     files = {"file": ("image.jpg", image_bytes, "image/jpeg")}
@@ -95,7 +129,7 @@ def get_objs():
         return []
 
 
-def calc_feature(resp_obj, self_stat):
+def calc_feature(self_state, resp_obj):
     cls = resp_obj["name"]
     xmin, ymin, xmax, ymax = resp_obj["bbox"]
     xmin_rad = xmin * (1 / 3 * np.pi)
@@ -103,58 +137,96 @@ def calc_feature(resp_obj, self_stat):
     loc_rad = xmax_rad - xmin_rad
     cent_loc_rad = (xmin_rad + xmax_rad) / 2
     loc_rad_bias = cent_loc_rad - 1 / 6 * np.pi
-    dist = get_rad_dist(loc_rad_bias)
-    obj_to_self_rad = self_stat["rad"] + loc_rad_bias
+    turn_neck(loc_rad_bias)
+    dist = get_dist()
+    obj_to_self_rad = get_body_direct(True) + loc_rad_bias
     dist_nlp = "near" if dist < 50 else "mid" if dist < 200 else "far"
     o2s_pos = position.get_obj_pos(obj_to_self_rad, dist)
     res = {"cls": cls, "loc_rad": loc_rad, "loc_rad_x": xmin, "loc_rad_bias": loc_rad_bias, "o2s_rad": obj_to_self_rad,
            "dist": dist, "dist_nlp": dist_nlp, "o2s_pos": o2s_pos}
     print("calc_feature: ", res)
-    return res
+    if cls in position.base_objs:
+        print("find base onj! ", res)
+        self_state = position.adjust_self_feat(self_state, res)
+    return self_state, res
 
 
-def calc_features(resp_objs, self_stat):
+def calc_features(self_state, resp_objs):
     features = []
+    base_obj_exist = False
     for itm in resp_objs:
-        features.append(calc_feature(itm, self_stat))
-    return features
+        if itm["name"] in position.base_objs:
+            base_obj_exist = True
+        self_state, obj_feat = calc_feature(self_state, itm)
+        features.append(obj_feat)
+    if base_obj_exist:
+        record(self_state, features)
+    return self_state, features
 
 
-# def get_obj_feature(cap, cls, self_rad):
-#     # return the most center one
-#     res = None
-#     resp_objs = get_objs(cap)
-#     for itm in resp_objs:
-#         if itm["name"] == cls:
-#             tmp = calc_feature(itm, self_rad)
-#             if res is None:
-#                 res = tmp
-#             elif np.abs(tmp["rad_bias"]) < np.abs(res["rad_bias"]):
-#                 res = tmp
-#     return res
-#
-#
-# def rot_to_align_and_get_dist(cap, obj_feat, self_rad, r_speed=90):
-#     # dist from rad center(60/2/180*np.pi)
-#     while np.abs(obj_feat["rad_bias"]) > 0.1:
-#         adust_rad = -obj_feat["rad_bias"]
-#         rot_func = r_right if adust_rad > 0 else r_left
-#         rot_func(np.rad2deg(adust_rad) / r_speed)
-#         get_obj_feature(cap, obj_feat["cls"], self_rad)
-#     return get_forward_dist()
+def analysis_vision(self_state):
+    tt_features = []
+    for dest_rad in [-3.14, -2.36, -1.57, -0.78, 0, 0.78, 1.57, 2.36]:
+        rotate_to_dest_rad(dest_rad)
+        resp_objs = get_objs()
+        self_state, features = calc_features(self_state, resp_objs)
+        tt_features += features
+    return self_state, tt_features
 
 
-# def get_obj_dist_with_retreat_look(rad, conf_rad, confirm_dist):
-#     # rad*dist = conf_rad*(dist+confirm_dist)
-#     dist = conf_rad * confirm_dist / (rad - conf_rad)
-#     return dist, dist * rad
+# def update_view_brightness(self_state):
+#     image = get_img()
+#     # image = None
+#     # while image is None:
+#     #     ret, image = cap1.read()
+#     self_state["view_brt"] = np.mean(image)
+#     return self_state
 
 
-def analysis_vision(self_stat):
-    resp_objs = get_objs()
-    return calc_features(resp_objs, self_stat)
+def sift_match(img0_path=CAMERA_IMG_PATH, img1_path=PREV_IMG_PATH):
+    # cur_time = str(int(time.time()))
+    img0 = cv2.imread(img0_path, cv2.IMREAD_GRAYSCALE)
+    img1 = cv2.imread(img1_path, cv2.IMREAD_GRAYSCALE)
+
+    # 初始化 AKAZE 探测器
+    akaze = cv2.AKAZE_create()
+    # 使用 SIFT 查找关键点和描述
+    kp0, des0 = akaze.detectAndCompute(img0, None)
+    # cv2.imwrite(r"Figure0_keypoint.png", cv2.drawKeypoints(img0, kp0, img0))
+    kp1, des1 = akaze.detectAndCompute(img1, None)
+    # cv2.imwrite(r"Figure1_keypoint.png", cv2.drawKeypoints(img1, kp1, img1))
+
+    # BFMatcher 默认参数
+    bf = cv2.BFMatcher()
+    matches = bf.knnMatch(des0, des1, k=2)
+
+    # good matches
+    good_matches = []
+    for m, n in matches:
+        if m.distance < 0.75 * n.distance:
+            good_matches.append([m])
+    # good_matches = matches
+    # 画匹配点
+    # img2 = cv2.drawMatchesKnn(img0, kp0, img1, kp1, good_matches, None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+    # cv2.imwrite("/".join(CAMERA_IMG_PATH.split("/")[:-1]) + '/matches_%s.jpg' % cur_time, img2)
+
+    # 选择匹配关键点
+    img0_kpts = np.float32([kp0[m[0].queryIdx].pt for m in good_matches]).reshape(-1, 1, 2)
+    img1_kpts = np.float32([kp1[m[0].trainIdx].pt for m in good_matches]).reshape(-1, 1, 2)
+
+    # 计算 homography
+    H, status = cv2.findHomography(img0_kpts, img1_kpts, cv2.RANSAC, 5.0)
+    print("trans matrix: \n", H, "\n")
+    # 变换
+    # warped_image = cv2.warpPerspective(img0, H, (img0.shape[1] + img1.shape[1], img0.shape[0] + img1.shape[0]))
+    #
+    # cv2.imwrite("/".join(CAMERA_IMG_PATH.split("/")[:-1]) + '/warped_%s.jpg' % cur_time, warped_image)
+    return H[0, 2], H[1, 2]
 
 
 if __name__ == '__main__':
     # print(analysis_vision({"pos": [-150, 150], "rad": -3.14 / 2}))
-    print(get_charge_point())
+    # print(get_charge_point())
+    # print(sift_match())
+    # while cap1.isOpened():
+    print(update_view_brightness({}))

@@ -31,7 +31,7 @@ def get_2pos_dist(pos0, pos1):
 
 def go_to_pos(self_stat, pos):
     base_feat = position.rot_to_get_base(self_stat)
-    self_stat = position.adjust_self_feat(self_stat, base_feat)
+    self_stat = state.update_self_state(self_stat, base_feat)
     dest_rad = position.rela_pos_to_rad(pos[0] - self_stat["pos"][0], pos[1] - self_stat["pos"][1])
     rotate_to_dest_rad(dest_rad)
     mv_dist = get_2pos_dist(pos, self_stat["pos"])

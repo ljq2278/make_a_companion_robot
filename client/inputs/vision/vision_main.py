@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append(r'/home/pi/Code/client')
 
 import cv2
@@ -6,7 +7,7 @@ import requests
 import os
 from PIL import Image
 
-from client_utils.path import VISION_SERVER_IP_PATH, CAMERA_IMG_PATH, PHYSICS_PARAM_BLACK_CAMERA
+from client_utils.path import VISION_SERVER_IP_PATH, CAMERA_IMG_PATH, PHYSICS_PARAM_BLACK_CAMERA, PREV_IMG_PATH
 
 
 def set_camera(cap):
@@ -56,13 +57,18 @@ cap1 = cv2.VideoCapture(cap_id)
 set_camera(cap1)
 # subprocess.Popen(["/usr/bin/uvcdynctrl", " -d /dev/video1 -S 6:10 '(LE)0x0400'"])
 # time.sleep(1)
-show_img_type = "none"  # consecutive, single
+show_img_type = "none"  # consecutive, single, save, none
 send_frame_rate = 24
+pre_camera_img = None
 
 
 def save_frame(frame):
+    global pre_camera_img
     img = Image.fromarray(frame)
     img.save(CAMERA_IMG_PATH, format="JPEG")
+    if pre_camera_img is not None:
+        pre_camera_img.save(PREV_IMG_PATH, format="JPEG")
+    pre_camera_img = img
 
 
 def send_image(cont):

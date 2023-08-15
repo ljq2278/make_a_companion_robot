@@ -64,7 +64,7 @@ def get_body_direct(use_rad=False):
     elif y_cali < 0 and x_cali < 0:
         deg = deg - 180
     # print(x, y, z)
-    print(x, y, z, x_cali, y_cali, z_cali, deg)
+    print("body_direct x, y, z, x_cali, y_cali, z_cali, deg: ", x, y, z, x_cali, y_cali, z_cali, deg)
     if use_rad:
         return np.deg2rad(deg)
     else:

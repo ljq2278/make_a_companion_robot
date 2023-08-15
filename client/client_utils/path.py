@@ -9,6 +9,7 @@ VISION_SERVER_IP_PATH = "http://192.168.1.9:8003/vision/"
 AUDITORY_SERVER_IP_PATH = "http://192.168.1.9:8004/auditory/"
 
 CAMERA_IMG_PATH = PRJ_PATH + "inputs/vision/tmp.png"
+PREV_IMG_PATH = PRJ_PATH + "inputs/vision/prev.png"
 MAP_RECORD_PATH = PRJ_PATH + "action/async_logical/map_record.txt"
 ASYNC_TASK_FLG = PRJ_PATH + "action/async_logical/last_task_state.txt"
 AUDITORY_FILE_PATH = PRJ_PATH + "inputs/auditory/tmp.wav"

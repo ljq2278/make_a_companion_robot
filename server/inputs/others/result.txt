@@ -1,1 +1,1 @@
-{"up_dist": 137, "voltage": 7.023000000000001, "person_near": true, "head_hori": 101, "head_vert": 99, "body_direct": 105, "last_async_task": "findObj", "last_async_task_state": "complete", "last_async_task_result": "failed, can not find it"}
+{"up_dist": 15, "voltage": 7.7010000000000005, "person_near": true, "head_hori": 75, "head_vert": 99, "body_direct": -116, "last_async_task": "findObj", "last_async_task_state": "complete", "last_async_task_result": "failed, can not find it"}

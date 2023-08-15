@@ -1,4 +1,3 @@
-
 import time
 import board
 import adafruit_vl53l1x
@@ -24,8 +23,11 @@ print("--------------------")
 
 vl53.start_ranging()
 
+
 def get_dist():
-    return vl53.distance
+    dist = vl53.distance
+    return dist if dist is not None else 10000
+
 
 if __name__ == '__main__':
     while True:

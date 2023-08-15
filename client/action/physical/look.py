@@ -15,7 +15,7 @@ vertical_stand_angle = 100
 vertical_up_angle = vertical_stand_angle - 60
 vertical_down_angle = vertical_stand_angle + 60
 
-horiz_stand_angle = 95
+horiz_stand_angle = 97
 horiz_right_angle = horiz_stand_angle - 80
 horiz_left_angle = horiz_stand_angle + 80
 
@@ -140,7 +140,7 @@ look_funcs = {
 if __name__ == '__main__':
     # turn_neck(0)
     # l_up()
-    l_right()
-    l_left()
+    # l_right()
+    # l_left()
     l_init()
     # l_up(vertical_stand_angle - 80)

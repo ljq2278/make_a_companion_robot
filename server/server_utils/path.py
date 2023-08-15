@@ -13,6 +13,7 @@ KEYBOARD_DATA = PRJ_PATH+'inputs/keyboard/result.txt'
 OTHERS_DATA = PRJ_PATH+'inputs/others/result.txt'
 # ULTRASOUND_DATA = PRJ_PATH+'inputs/ultrasound/result.txt'
 VISION_DATA = PRJ_PATH+'inputs/vision/result.txt'
+VISION_RAW_DATA = PRJ_PATH+'inputs/vision/result.png'
 # KERNEL_DATA = PRJ_PATH+'inputs/kernel/result.txt'
 
 # ACTION_FILE = PRJ_PATH+'action/action.txt'

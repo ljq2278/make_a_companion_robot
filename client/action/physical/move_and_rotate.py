@@ -1,8 +1,11 @@
 import RPi.GPIO as GPIO
 import time
 from action.physical.compass import get_body_direct
+from action.physical.posture import get_posture
 import action.physical.laser as laser
+from action.physical.photic import get_photic
 import action.physical.ultrasound_measure as us
+import numpy as np
 
 PWMA = 18
 AIN1 = 22
@@ -28,8 +31,20 @@ L_Motor.start(0)
 R_Motor = GPIO.PWM(PWMB, 100)
 R_Motor.start(0)
 
-default_mv_speed = 20
-default_rot_speed = 90
+default_mv_speed = 30
+default_rot_speed = 60
+
+m_unit_tm = 0.02
+r_unit_tm = 0.02
+
+max_rot_unit_conts = 36
+# stop_accelerate = -5
+# stop_x_gravity = 4
+# stop_abs_accelerate = 5
+# stop_abs_gyro = 0.5
+stop_abs_accelerate = 4
+stop_abs_gyro = 0.3
+
 
 def motor_to_mv_speed(motor_speed):
     return 17.225 / 50 * motor_speed
@@ -48,6 +63,7 @@ def rot_speed_to_motor(rot_speed):
 
 
 def _stop():
+    print("_stop")
     L_Motor.ChangeDutyCycle(0)
     GPIO.output(AIN2, False)  # AIN2
     GPIO.output(AIN1, False)  # AIN1
@@ -56,8 +72,40 @@ def _stop():
     GPIO.output(BIN1, False)  # BIN1
 
 
-def m_up(mv_tm, mv_speed=default_mv_speed):
-    mv_tm = min(laser.get_dist() - 10, mv_tm * mv_speed) / mv_speed
+def _photic_condition():
+    if laser.get_dist() < 5:
+        return False
+    if get_photic() > 11:
+        return False
+    return True
+
+
+def _m_unit():
+    time.sleep(m_unit_tm)
+    gx, gy, gz, ax, ay, az = get_posture()
+    # if ax < stop_accelerate or ax > stop_x_gravity:
+    if np.abs(ax) > stop_abs_accelerate:
+        print("Gyro X:%.2f, Y: %.2f, Z: %.2f rad/s, Acceleration: X:%.2f, Y: %.2f, Z: %.2f m/s^2" % (gx, gy, gz, ax, ay, az))
+        return False
+    else:
+        # print(ax)
+        return True
+
+
+def _r_unit():
+    time.sleep(r_unit_tm)
+    gx, gy, gz, ax, ay, az = get_posture()
+    # if ax < stop_accelerate or ax > stop_x_gravity:
+    if np.abs(gx) > stop_abs_gyro:
+        print("Gyro X:%.2f, Y: %.2f, Z: %.2f rad/s, Acceleration: X:%.2f, Y: %.2f, Z: %.2f m/s^2" % (gx, gy, gz, ax, ay, az))
+        return False
+    else:
+        print(gx)
+        return True
+
+
+def m_up_photic(mv_tm, mv_speed=default_mv_speed):
+    # mv_tm = min(laser.get_dist() - 10, mv_tm * mv_speed) / mv_speed
     motor_speed = mv_speed_to_motor(mv_speed)
     L_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(AIN2, False)  # AIN2
@@ -65,12 +113,38 @@ def m_up(mv_tm, mv_speed=default_mv_speed):
     R_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(BIN2, False)  # BIN2
     GPIO.output(BIN1, True)  # BIN1
-    time.sleep(mv_tm)
+    success = True
+    cont = 0
+    while success and cont * m_unit_tm < mv_tm:
+        success = _m_unit()
+        success = _photic_condition()
+        cont += 1
+    if not success:
+        m_down(0.5)
     _stop()
+    return success
+
+
+def m_up(mv_tm, mv_speed=default_mv_speed):
+    # mv_tm = min(laser.get_dist() - 10, mv_tm * mv_speed) / mv_speed
+    motor_speed = mv_speed_to_motor(mv_speed)
+    L_Motor.ChangeDutyCycle(motor_speed)
+    GPIO.output(AIN2, False)  # AIN2
+    GPIO.output(AIN1, True)  # AIN1
+    R_Motor.ChangeDutyCycle(motor_speed)
+    GPIO.output(BIN2, False)  # BIN2
+    GPIO.output(BIN1, True)  # BIN1
+    success = True
+    cont = 0
+    while success and cont * m_unit_tm < mv_tm:
+        success = _m_unit()
+        cont += 1
+    _stop()
+    return success
 
 
 def m_down(mv_tm, mv_speed=default_mv_speed):
-    mv_tm = min(us.get_dist() - 10, mv_tm * mv_speed) / mv_speed
+    # mv_tm = min(laser.get_dist() - 10, mv_tm * mv_speed) / mv_speed
     motor_speed = mv_speed_to_motor(mv_speed)
     L_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(AIN2, True)  # AIN2
@@ -78,8 +152,13 @@ def m_down(mv_tm, mv_speed=default_mv_speed):
     R_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(BIN2, True)  # BIN2
     GPIO.output(BIN1, False)  # BIN1
-    time.sleep(mv_tm)
+    success = True
+    cont = 0
+    while success and cont * m_unit_tm < mv_tm:
+        success = _m_unit()
+        cont += 1
     _stop()
+    return success
 
 
 def r_left(rot_tm, rot_speed=default_rot_speed):
@@ -90,8 +169,14 @@ def r_left(rot_tm, rot_speed=default_rot_speed):
     R_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(BIN2, False)  # BIN2
     GPIO.output(BIN1, True)  # BIN1
-    time.sleep(rot_tm)
+    success = True
+    cont = 0
+    while success and cont * r_unit_tm < rot_tm:
+        print("r_left_r_unit")
+        success = _r_unit()
+        cont += 1
     _stop()
+    return success
 
 
 def r_right(rot_tm, rot_speed=default_rot_speed):
@@ -102,19 +187,52 @@ def r_right(rot_tm, rot_speed=default_rot_speed):
     R_Motor.ChangeDutyCycle(motor_speed)
     GPIO.output(BIN2, True)  # BIN2
     GPIO.output(BIN1, False)  # BIN1
-    time.sleep(rot_tm)
+    success = True
+    cont = 0
+    while success and cont * r_unit_tm < rot_tm:
+        print("r_right_r_unit")
+        success = _r_unit()
+        cont += 1
     _stop()
+    return success
 
 
-def rotate_to_dest_rad(dest_rad):
+def rotate_to_dest_rad(dest_rad, rot_speed=default_rot_speed):
     cur_rad = get_body_direct(use_rad=True)
-    while abs(cur_rad - dest_rad) > 0.1:
-        print("cur_rad: ", cur_rad)
+    success = True
+    cont = 0
+    while success and abs(cur_rad - dest_rad) > 0.1 and cont < max_rot_unit_conts:
+        cont += 1
+        # print("cur_rad: ", cur_rad)
         if dest_rad - cur_rad > 0:
-            r_right(0.1)
+            print("rotate right")
+            success = r_right(0.1, rot_speed)
         else:
-            r_left(0.1)
+            print("rotate left")
+            success = r_left(0.1, rot_speed)
         cur_rad = get_body_direct(use_rad=True)
+    if not success:
+        print("rotate stuck!")
+    else:
+        print("rotate success!")
+
+
+def go_wander():
+    flg = 1
+    while True:
+        rotate_to_dest_rad(np.random.random() * np.pi * 2 - np.pi)
+        if flg == 1:
+            print("go up start")
+            success = (5)
+            print("go up end")
+        else:
+            print("go down start")
+            success = m_down(5)
+            print("go down end")
+        # if not success:
+        #     time.sleep(2)
+        #     flg = 1 - flg
+        flg = 1 - flg
 
 
 move_funcs = {
@@ -131,6 +249,10 @@ if __name__ == '__main__':
         # t_right(50, 3)
         # _stop()
         # time.sleep(2)
-        rotate_to_dest_rad(-2.925)
+        # rotate_to_dest_rad(-2.925)
+        # m_up2(10)
+        # m_down2(10)
+        go_wander()
+        # rotate_to_dest_rad2(0)
     except KeyboardInterrupt:
         GPIO.cleanup()

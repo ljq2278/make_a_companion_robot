@@ -1,9 +1,6 @@
 import math
 from sympy import Point, Circle
 import numpy as np
-from action.physical.compass import get_body_direct
-from action.physical.move_and_rotate import r_right, m_up
-from action.async_logical.lib import vision
 
 m_speed = 20
 r_speed = 90
@@ -32,24 +29,24 @@ def get_obj_pos(obj_to_self_rad, obj_dist):
     return [x, y]
 
 
-def rot_to_get_base(self_stat):
-    rotted = 0
-    base_feat = None
-    while rotted < 360:
-        r_right(rot_unit / r_speed, r_speed)
-        print("rot angle searching base: ", rot_unit)
-        rotted += rot_unit
-        # self_stat["rad"] += np.pi / 3
-        self_stat["rad"] = get_body_direct(use_rad=True)
-        features = vision.analysis_vision(self_stat)
-        for feat in features:
-            if feat["cls"] in base_objs:
-                base_feat = feat
-                break
-        if base_feat is not None:
-            break
-    print("rot_to_get_base, base_feat: ", base_feat)
-    return base_feat
+# def rot_to_get_base(self_stat):
+#     rotted = 0
+#     base_feat = None
+#     while rotted < 360:
+#         r_right(rot_unit / r_speed, r_speed)
+#         print("rot angle searching base: ", rot_unit)
+#         rotted += rot_unit
+#         # self_stat["rad"] += np.pi / 3
+#         self_stat["rad"] = get_body_direct(use_rad=True)
+#         self_stat, features = vision.analysis_vision(self_stat)
+#         for feat in features:
+#             if feat["cls"] in base_objs:
+#                 base_feat = feat
+#                 break
+#         if base_feat is not None:
+#             break
+#     print("rot_to_get_base, base_feat: ", base_feat)
+#     return base_feat
 
 
 def adjust_self_feat(self_stat, base_feat):

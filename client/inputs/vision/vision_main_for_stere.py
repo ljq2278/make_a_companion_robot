@@ -1,18 +1,18 @@
+import sys
+sys.path.append(r'/home/pi/Code/client')
+import time
+import subprocess
 import cv2
 import requests
 import os
 from PIL import Image
-import numpy as np
-import subprocess
-import time
-import sys
 
-sys.path.append(r'/home/pi/Code/client')
 from client_utils.path import VISION_SERVER_IP_PATH, CAMERA_IMG_PATH, PHYSICS_PARAM_BLACK_CAMERA
 
 
 def set_camera(cap):
-    # cap.set(cv2.CAP_PROP_FPS, 20)
+    cap.set(cv2.CAP_PROP_FPS, 4)
+    # cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     # print("CAP_PROP_FPS: ", cap.get(cv2.CAP_PROP_FPS))
     cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('H', '2', '6', '4'))
     # print("CAP_PROP_FOURCC: ", cap.get(cv2.CAP_PROP_FOURCC))
@@ -51,15 +51,15 @@ def set_camera(cap):
     return
 
 
-cap_id = 1
+cap_id = 0
 # cap_id += + cv2.CAP_DSHOW
 cap1 = cv2.VideoCapture(cap_id)
 # os.system("bash ~/camera.sh")
 set_camera(cap1)
 # subprocess.Popen(["/usr/bin/uvcdynctrl", " -d /dev/video1 -S 6:10 '(LE)0x0400'"])
 # time.sleep(1)
-show_img_type = "consecutive"  # consecutive, single
-send_frame_rate = 10
+show_img_type = "consecutive"  # consecutive, single, save
+send_frame_rate = 24
 
 
 def save_frame(frame):
@@ -69,12 +69,11 @@ def save_frame(frame):
 
 def send_image(cont):
     global cap1
+    print("CAP_PROP_FPS: ", cap1.get(cv2.CAP_PROP_FPS))
     print("read start ###########################")
     ret, frame = cap1.read()
     print("read end ###########################")
     if cont % send_frame_rate == 0:
-        print("CAP_PROP_FPS: ", cap1.get(cv2.CAP_PROP_FPS))
-        # frame = np.power(frame.astype(float), 0.9).astype(np.uint8)
         save_frame(frame)
         _, image_encoded = cv2.imencode(".jpg", frame)
         image_bytes = image_encoded.tobytes()
@@ -93,14 +92,9 @@ if __name__ == "__main__":
     try:
         while cap1.isOpened():
             send_image(cont)
-            # if not test_camera():
-            #     print("read end")
-            # time.sleep(1)
             cont += 1
             if cont - send_frame_rate == 1:
-                #     # set_camera2(cap1)
-                #     # os.system("bash ~/camera.sh")
-                os.system("/usr/bin/uvcdynctrl -d /dev/video1 -S 6:10 '(LE)0x0400'")
-            #     # subprocess.Popen(["/usr/bin/uvcdynctrl", " -d /dev/video1 -S 6:10 '(LE)0x0400'"])
+                # os.system("/usr/bin/uvcdynctrl -d /dev/video0 -S 6:10 '(LE)0x0400'")
+                subprocess.Popen(["bash","/home/pi/camera.sh"])
     finally:
         cap1.release()

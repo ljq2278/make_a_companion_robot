@@ -8,7 +8,7 @@ from fastapi.responses import Response, PlainTextResponse, JSONResponse
 import subprocess
 import torch
 
-from server_utils.path import MODEL_PATH, VISION_DATA
+from server_utils.path import MODEL_PATH, VISION_DATA, VISION_RAW_DATA
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -25,10 +25,10 @@ def show_imgs(results):
     results.render()
     im = results.ims[0]
     tmp = Image.fromarray(im)
-    tmp.save("tmp.png", format="JPEG")
+    tmp.save(VISION_RAW_DATA, format="JPEG")
     # tmp = Image.fromarray(res_plotted, mode="RGB")
     # tmp.save("tmp.png")
-    p = subprocess.Popen("python inputs/vision/test/image_viewer.py tmp.png")
+    p = subprocess.Popen("python inputs/vision/test/image_viewer.py " + VISION_RAW_DATA)
     if len(img_procs) == 2:
         tmp = img_procs.pop(0)
         tmp.kill()
@@ -39,12 +39,21 @@ def show_cur_img(results):
     results.render()
     im = results.ims[0]
     tmp = Image.fromarray(im)
-    tmp.save("tmp.png", format="JPEG")
+    tmp.save(VISION_RAW_DATA, format="JPEG")
     # tmp = Image.fromarray(res_plotted, mode="RGB")
     # tmp.save("tmp.png")
-    p = subprocess.Popen("python inputs/vision/test/image_viewer.py tmp.png")
+    p = subprocess.Popen("python inputs/vision/test/image_viewer.py " + VISION_RAW_DATA)
     time.sleep(1)
     p.kill()
+
+
+def only_save(results):
+    results.render()
+    im = results.ims[0]
+    tmp = Image.fromarray(im)
+    tmp.save(VISION_RAW_DATA, format="JPEG")
+    # tmp = Image.fromarray(res_plotted, mode="RGB")
+    # tmp.save("tmp.png")
 
 
 @app.post("/vision/")
@@ -65,6 +74,8 @@ async def detect_objects(file: UploadFile = File(...), text: str = Form(...)):
         show_imgs(results)
     elif text == "single":
         show_cur_img(results)
+    elif text == "save":
+        only_save(results)
     # logging.debug('len: ',len(results))
     logging.debug("Object detection performed")
 
