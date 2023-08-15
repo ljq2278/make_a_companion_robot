@@ -2,10 +2,7 @@ import math
 from sympy import Point, Circle
 import numpy as np
 
-m_speed = 20
-r_speed = 90
-rot_unit = 45
-mv_unit = 20
+
 base_objs = ["Tripod", "Fan", "Monitor/TV"]
 base_poses = {"Tripod": [250, 20], "Fan": [0, 0], "Monitor/TV": [40, 200]}
 

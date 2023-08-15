@@ -1,3 +1,5 @@
+# notice the power saving!
+
 import RPi.GPIO as GPIO
 import time
 from action.physical.compass import get_body_direct
@@ -31,11 +33,11 @@ L_Motor.start(0)
 R_Motor = GPIO.PWM(PWMB, 100)
 R_Motor.start(0)
 
-default_mv_speed = 30
+default_mv_speed = 20
 default_rot_speed = 60
 
-m_unit_tm = 0.02
-r_unit_tm = 0.02
+m_unit_tm = 0.5
+r_unit_tm = 0.1
 
 max_rot_unit_conts = 36
 # stop_accelerate = -5
@@ -61,6 +63,45 @@ def mv_speed_to_motor(mv_speed):
 def rot_speed_to_motor(rot_speed):
     return 50 / 90 * rot_speed
 
+def _start_motors():
+    L_Motor.start(0)
+    R_Motor.start(0)
+
+def _stop_motors():
+    L_Motor.stop()
+    R_Motor.stop()
+
+def _set_motors_m_up(motor_speed):
+    L_Motor.ChangeDutyCycle(motor_speed)
+    GPIO.output(AIN2, False)  # AIN2
+    GPIO.output(AIN1, True)  # AIN1
+    R_Motor.ChangeDutyCycle(motor_speed)
+    GPIO.output(BIN2, False)  # BIN2
+    GPIO.output(BIN1, True)  # BIN1
+
+def _set_motors_m_down(motor_speed):
+    L_Motor.ChangeDutyCycle(motor_speed)
+    GPIO.output(AIN2, True)  # AIN2
+    GPIO.output(AIN1, False)  # AIN1
+    R_Motor.ChangeDutyCycle(motor_speed)
+    GPIO.output(BIN2, True)  # BIN2
+    GPIO.output(BIN1, False)  # BIN1
+
+def _set_motors_r_left(motor_speed):
+    L_Motor.ChangeDutyCycle(motor_speed)
+    GPIO.output(AIN2, True)  # AIN2
+    GPIO.output(AIN1, False)  # AIN1
+    R_Motor.ChangeDutyCycle(motor_speed)
+    GPIO.output(BIN2, False)  # BIN2
+    GPIO.output(BIN1, True)  # BIN1
+
+def _set_motors_r_right(motor_speed):
+    L_Motor.ChangeDutyCycle(motor_speed)
+    GPIO.output(AIN2, False)  # AIN2
+    GPIO.output(AIN1, True)  # AIN1
+    R_Motor.ChangeDutyCycle(motor_speed)
+    GPIO.output(BIN2, True)  # BIN2
+    GPIO.output(BIN1, False)  # BIN1
 
 def _stop():
     print("_stop")
@@ -73,54 +114,61 @@ def _stop():
 
 
 def _photic_condition():
-    if laser.get_dist() < 5:
+    _stop_motors()
+    if laser.get_dist() < 10:
+        _start_motors()
         return False
     if get_photic() > 11:
+        _start_motors()
         return False
+    _start_motors()
     return True
 
 
 def _m_unit():
     time.sleep(m_unit_tm)
+    _stop_motors()
     gx, gy, gz, ax, ay, az = get_posture()
+    _start_motors()
     # if ax < stop_accelerate or ax > stop_x_gravity:
     if np.abs(ax) > stop_abs_accelerate:
         print("Gyro X:%.2f, Y: %.2f, Z: %.2f rad/s, Acceleration: X:%.2f, Y: %.2f, Z: %.2f m/s^2" % (gx, gy, gz, ax, ay, az))
         return False
     else:
-        # print(ax)
+        print("ax: ", ax)
         return True
 
 
 def _r_unit():
     time.sleep(r_unit_tm)
+    _stop_motors()
     gx, gy, gz, ax, ay, az = get_posture()
+    _start_motors()
     # if ax < stop_accelerate or ax > stop_x_gravity:
     if np.abs(gx) > stop_abs_gyro:
         print("Gyro X:%.2f, Y: %.2f, Z: %.2f rad/s, Acceleration: X:%.2f, Y: %.2f, Z: %.2f m/s^2" % (gx, gy, gz, ax, ay, az))
         return False
     else:
-        print(gx)
+        print("gx: ", gx)
         return True
 
 
 def m_up_photic(mv_tm, mv_speed=default_mv_speed):
     # mv_tm = min(laser.get_dist() - 10, mv_tm * mv_speed) / mv_speed
     motor_speed = mv_speed_to_motor(mv_speed)
-    L_Motor.ChangeDutyCycle(motor_speed)
-    GPIO.output(AIN2, False)  # AIN2
-    GPIO.output(AIN1, True)  # AIN1
-    R_Motor.ChangeDutyCycle(motor_speed)
-    GPIO.output(BIN2, False)  # BIN2
-    GPIO.output(BIN1, True)  # BIN1
-    success = True
+    _set_motors_m_up(motor_speed)
+    mv_success = photic_success = True
     cont = 0
-    while success and cont * m_unit_tm < mv_tm:
-        success = _m_unit()
-        success = _photic_condition()
+    while mv_success and photic_success and cont * m_unit_tm < mv_tm:
+        print("m_up_photic unit")
+        mv_success = _m_unit()
+        print("_photic_condition")
+        photic_success = _photic_condition()
+        _set_motors_m_up(motor_speed)
         cont += 1
+    success = mv_success and photic_success
     if not success:
-        m_down(0.5)
+        m_down(3, 10)
     _stop()
     return success
 
@@ -128,16 +176,12 @@ def m_up_photic(mv_tm, mv_speed=default_mv_speed):
 def m_up(mv_tm, mv_speed=default_mv_speed):
     # mv_tm = min(laser.get_dist() - 10, mv_tm * mv_speed) / mv_speed
     motor_speed = mv_speed_to_motor(mv_speed)
-    L_Motor.ChangeDutyCycle(motor_speed)
-    GPIO.output(AIN2, False)  # AIN2
-    GPIO.output(AIN1, True)  # AIN1
-    R_Motor.ChangeDutyCycle(motor_speed)
-    GPIO.output(BIN2, False)  # BIN2
-    GPIO.output(BIN1, True)  # BIN1
+    _set_motors_m_up(motor_speed)
     success = True
     cont = 0
     while success and cont * m_unit_tm < mv_tm:
         success = _m_unit()
+        _set_motors_m_up(motor_speed)
         cont += 1
     _stop()
     return success
@@ -146,16 +190,12 @@ def m_up(mv_tm, mv_speed=default_mv_speed):
 def m_down(mv_tm, mv_speed=default_mv_speed):
     # mv_tm = min(laser.get_dist() - 10, mv_tm * mv_speed) / mv_speed
     motor_speed = mv_speed_to_motor(mv_speed)
-    L_Motor.ChangeDutyCycle(motor_speed)
-    GPIO.output(AIN2, True)  # AIN2
-    GPIO.output(AIN1, False)  # AIN1
-    R_Motor.ChangeDutyCycle(motor_speed)
-    GPIO.output(BIN2, True)  # BIN2
-    GPIO.output(BIN1, False)  # BIN1
+    _set_motors_m_down(motor_speed)
     success = True
     cont = 0
     while success and cont * m_unit_tm < mv_tm:
         success = _m_unit()
+        _set_motors_m_down(motor_speed)
         cont += 1
     _stop()
     return success
@@ -163,17 +203,13 @@ def m_down(mv_tm, mv_speed=default_mv_speed):
 
 def r_left(rot_tm, rot_speed=default_rot_speed):
     motor_speed = rot_speed_to_motor(rot_speed)
-    L_Motor.ChangeDutyCycle(motor_speed)
-    GPIO.output(AIN2, True)  # AIN2
-    GPIO.output(AIN1, False)  # AIN1
-    R_Motor.ChangeDutyCycle(motor_speed)
-    GPIO.output(BIN2, False)  # BIN2
-    GPIO.output(BIN1, True)  # BIN1
+    _set_motors_r_left(motor_speed)
     success = True
     cont = 0
     while success and cont * r_unit_tm < rot_tm:
         print("r_left_r_unit")
         success = _r_unit()
+        _set_motors_r_left(motor_speed)
         cont += 1
     _stop()
     return success
@@ -181,17 +217,13 @@ def r_left(rot_tm, rot_speed=default_rot_speed):
 
 def r_right(rot_tm, rot_speed=default_rot_speed):
     motor_speed = rot_speed_to_motor(rot_speed)
-    L_Motor.ChangeDutyCycle(motor_speed)
-    GPIO.output(AIN2, False)  # AIN2
-    GPIO.output(AIN1, True)  # AIN1
-    R_Motor.ChangeDutyCycle(motor_speed)
-    GPIO.output(BIN2, True)  # BIN2
-    GPIO.output(BIN1, False)  # BIN1
+    _set_motors_r_right(motor_speed)
     success = True
     cont = 0
     while success and cont * r_unit_tm < rot_tm:
         print("r_right_r_unit")
         success = _r_unit()
+        _set_motors_r_right(motor_speed)
         cont += 1
     _stop()
     return success
@@ -223,7 +255,7 @@ def go_wander():
         rotate_to_dest_rad(np.random.random() * np.pi * 2 - np.pi)
         if flg == 1:
             print("go up start")
-            success = (5)
+            success = m_up(5)
             print("go up end")
         else:
             print("go down start")
