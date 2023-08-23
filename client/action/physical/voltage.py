@@ -41,5 +41,5 @@ def test():
 # 程序入口
 if __name__ == '__main__':
     # test()
-    # while True:
-    print(get_voltage())
+    while True:
+        print(get_voltage())

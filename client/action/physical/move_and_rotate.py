@@ -6,7 +6,9 @@ from action.physical.compass import get_body_direct
 from action.physical.posture import get_posture
 import action.physical.laser as laser
 from action.physical.photic import get_photic
-import action.physical.ultrasound_measure as us
+from action.physical.voltage import get_voltage
+from action.physical.look import l_init
+# import action.physical.ultrasound_measure as us
 import numpy as np
 
 PWMA = 18
@@ -275,16 +277,24 @@ move_funcs = {
 
 if __name__ == '__main__':
     try:
-        # m_up(0.5, 10)
-        # m_down(5, 20)
-        # r_left(0.5)
+        print(get_voltage())
+        l_init()
+        print(get_voltage())
+        m_up(4)
+        # print(get_voltage())
+        # m_down(3)
+        # print(get_voltage())
+        # r_left(0.2)
+        # print(get_voltage())
+        # r_right(0.2)
+        print(get_voltage())
         # t_right(50, 3)
         # _stop()
         # time.sleep(2)
         # rotate_to_dest_rad(-2.925)
         # m_up2(10)
         # m_down2(10)
-        go_wander()
+        # go_wander()
         # rotate_to_dest_rad2(0)
     except KeyboardInterrupt:
         GPIO.cleanup()

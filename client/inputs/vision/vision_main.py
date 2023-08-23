@@ -57,7 +57,7 @@ cap1 = cv2.VideoCapture(cap_id)
 set_camera(cap1)
 # subprocess.Popen(["/usr/bin/uvcdynctrl", " -d /dev/video1 -S 6:10 '(LE)0x0400'"])
 # time.sleep(1)
-show_img_type = "none"  # consecutive, single, save, none
+show_img_type = "consecutive"  # consecutive, single, save, none
 send_frame_rate = 24
 pre_camera_img = None
 

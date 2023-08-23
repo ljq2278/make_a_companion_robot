@@ -1,0 +1,17 @@
+Human: hello
+Eva(me): Hello
+
+Eva(me): me): Hello! Is there anything else I can help with?
+Human: what is your name
+Eva(me): My name is Eva.
+Human: what do you want to do next?
+Eva(me): get more details about recipes
+
+Human: want to learn more about recipes?
+Eva(me): yes, that is true!
+Human: So what is your favourite recipes?
+Eva(me): My favourite recipe is chicken stir-fry. It's a delicious dish that is easy to make and can be customized with different vegetables and sauces.
+
+Human: what do you want
+Human: ok,,do what you want to do
+Eva(me): My favourite recipe is chicken stir-fry!

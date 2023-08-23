@@ -6,9 +6,10 @@ import lib.ST7796 as TFT
 import Adafruit_GPIO as GPIO
 import Adafruit_GPIO.SPI as SPI
 from client_utils.path import PRJ_PATH
+
 # Raspberry Pi configuration.
-DC = 21
-RST = 22
+DC = 16
+RST = 13
 SPI_PORT = 0
 SPI_DEVICE = 0
 font_size = 40
@@ -40,8 +41,16 @@ def _draw_rotated_text(image, text, position, angle, font, fill=(255, 255, 255))
 
 def _clear(image, position, fill=(0, 0, 0)):
     draw = ImageDraw.Draw(image)
-    draw.rectangle((position[1], width - position[0], position[1] + font_size, width - position[0] - font_size // 2),
-                   outline=255, fill=fill)
+    x0, y0, x1, y1 = position[1], width - position[0], position[1] + font_size, width - position[0] - font_size // 2
+    if x0 > x1:
+        tmp = x0
+        x0 = x1
+        x1 = tmp
+    if y0 > y1:
+        tmp = y0
+        y0 = y1
+        y1 = tmp
+    draw.rectangle((x0, y0, x1, y1), outline=255, fill=fill)
 
 
 def draw_text(s):
@@ -49,7 +58,7 @@ def draw_text(s):
     # Create TFT LCD display class.
 
     if s != "" and (cur_posi[0] < width and cur_posi[1] < height):
-        _draw_rotated_text(disp.buffer, s, cur_posi, 90, ImageFont.truetype(font=PRJ_PATH+"assets/STHUPO.TTF", size=font_size))
+        _draw_rotated_text(disp.buffer, s, cur_posi, 90, ImageFont.truetype(font=PRJ_PATH + "assets/STHUPO.TTF", size=font_size))
         if cur_posi[0] >= width - font_size // 2:
             cur_posi[0] = 0
             cur_posi[1] += font_size
