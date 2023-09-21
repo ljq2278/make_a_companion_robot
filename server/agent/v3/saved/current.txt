@@ -1,1 +1,0 @@
-{"speech": "the difference between IPv4 and IP", "mood": "normal"}

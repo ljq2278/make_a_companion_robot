@@ -1,12 +1,9 @@
 PRJ_PATH = "/home/pi/Code/client/"
 
-# BODY_SERVER_IP_PATH = "http://192.168.1.9:8002/body/"
-OTHERS_SERVER_IP_PATH = "http://192.168.1.9:8001/others/"
-# KERNEL_SERVER_IP_PATH = "http://192.168.1.9:8003/kernel/"
-KEYBOARD_SERVER_IP_PATH = "http://192.168.1.9:8002/keyborad/"
-# ULTRASOUND_SERVER_IP_PATH = "http://192.168.1.9:8005/ultrasound/"
-VISION_SERVER_IP_PATH = "http://192.168.1.9:8003/vision/"
-AUDITORY_SERVER_IP_PATH = "http://192.168.1.9:8004/auditory/"
+OTHERS_SERVER_IP_PATH = "http://127.0.0.1:8001/others/"
+KEYBOARD_SERVER_IP_PATH = "http://127.0.0.1:8002/keyborad/"
+VISION_SERVER_IP_PATH = "http://127.0.0.1:8003/vision/"
+AUDITORY_SERVER_IP_PATH = "http://127.0.0.1:8004/auditory/"
 
 CAMERA_IMG_PATH = PRJ_PATH + "inputs/vision/tmp.png"
 PREV_IMG_PATH = PRJ_PATH + "inputs/vision/prev.png"

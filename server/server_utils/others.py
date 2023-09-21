@@ -13,6 +13,7 @@ task_priorities = {
     "goCharge": 3
 }
 
+expressions = ["[happy]","[sad]","[normal]","[angry]","[amazed]","[confused]","[scared]"]
 
 def send_message(addr, data):
     response = requests.post(addr, data=data)
@@ -31,6 +32,14 @@ def parse_txt_and_mood(txt):
         return res
     res["speech"] = ''.join(tmp[:-1])
     res["mood"] = tmp[-1]
+    return res
+def parse_txt_and_mood_simple(txt):
+    txt = txt.strip().split("\n")[0]
+    res = {"speech": txt, "mood": "normal"}
+    for itm in expressions:
+        if itm in txt:
+            res["mood"] = itm[1:-1]
+            break
     return res
 
 
@@ -93,6 +102,13 @@ class States:
             res["voltage"] = "low"
         else:
             res["voltage"] = "sufficient"
+        return res
+
+    def get_human_message(self):
+        state = self.get_states()
+        res = state["human keyboard message"]
+        if res is None or res == "":
+            res = state["human oral message"]
         return res
 
     def get_critical_states(self):
